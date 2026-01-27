@@ -89,25 +89,40 @@
             padding: 0 20px;
         }
 
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+        .logo-container {
+           display: flex;         /* يخليهم بجنب بعضهم */
+           align-items: center;   /* يسنترهم عمودياً */
+           gap: 12px;            /* مسافة مزيانة بين التصويرة والنص */
+            direction: rtl;        /* يضمن الترتيب العربي: التصويرة عاليمين */
+}
 
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            box-shadow: 0 5px 20px rgba(45, 134, 89, 0.3);
-            animation: pulse 3s ease-in-out infinite;
-        }
-
+        .logo-image {
+    width: 55px;           /* قياس متناسق مع الهيدر */
+    height: 55px;
+    border-radius: 12px;   /* حواف مدورة شوية */
+    object-fit: cover;     /* يضمن التصويرة ما تتجبدش */
+    box-shadow: 0 4px 10px rgba(45, 134, 89, 0.15); /* ظل خفيف */
+}
+.logo-image:hover {
+    transform: scale(1.1) rotate(5deg);
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+       .logo-content {
+    display: flex;
+    flex-direction: column;
+}
+.logo-title {
+    font-size: 1.8rem;
+    color: #2d8659;
+    margin: 0;
+    font-family: 'Amiri', serif; /* باش يجي الخط مزيان */
+}
+.logo-subtitle {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0;
+}
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -1216,28 +1231,25 @@
 <body>
     <!-- Header -->
     <header class="main-header">
-        <div class="header-content">
-            <div class="logo-section">
-                <div class="logo-icon">
-                    <img src="data:image/webp;base64,UklGRvIEAABXRUJQVlA4WAoAAAAgAAAAQgAAUAAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAAAAYpkAALeFAAAY2lhZWiAAAAAAAAAkqAAA+EQAALbPWFlaIAAAAAAAAPbWAAEAAAAA0y1wYXJhAAAAAAAEAAAAAmZmAADypwAADVkAABPQAAAKWwAAAAAAAAAAbWx1YwAAAAAAAAABAAAADGVuVVMAAAAgAAAAHABHAG8AbwBnAGwAZQAgAEkAbgBjAC4AIAAyADAAMQA2VlA4IAQDAACQDwCdASpDAFEAPkEikEWjoiEUSQXQOAUEsQBn6kJrNwFwR9tF5gP109aP0GecXd1B3oAfrN1r3lD3QCRRLKCLgng6rKOcDlPoKEOdaZAc7zw+G7OpS0MzRL8HQI9/xfkadsO3uwSCCJ4EPj2IWdzNeRtla6gAAd5fVLlHjxn7r9wYfcaklIAA/v8jC45Oxm5w0oXUtdDV/RrpIj9Hr5YdWrsJGQHvhbR3LT/rnDrXYn+lxBnmA2szSTJa6pYsEgqoamDUlDsyNEI+cUxoR4IY3AmccShMTaXXRQfhLPfyp1Mh5P0P5NvWrcAMgXUsFlMBL8c2BJRrkCW3U4r4MT+/WXE76Xsz7pkdvhK1/oaKyXn153QIZZy0qnenOKGdOvvJ3XIv/nlA/rfbMTKDKC55pvf7z09eFb7MokdOeeQHtIUfDeUs7CrlvHL5sZZ7nbbLDdN9dS/XT+QvxOzHt3O+8Oj/qLucvP/i7neKeGVyZ7hfcgCewSBcexggW5NlRoN6Xh1BPm2Jtuf+GAIVp92m2gz/MC4pg/YgGZcYqRKQ+rR0txHvJHU8ondcM2D8JFlaqqLfuU6XCFnOYMaAhHeHaDBDPU7nBmH+v85D/u7/WS+I0+5SmaEUpA/UgxDfZfg7ql4tvAa9oX3N3PUZHXaqE+GuH9gV9FTU/EnHWyRVFEHiCp2z0Yjq48TrGWF+N09oeQPLvkNju3g+W0Si6xfzljkSBkYI3rIDhE3OnU86ZJOqDbBDyMuXf7UJGiNoqlRPvRnjmUfB42c/38GNdg6pG9wDW8hcL8SH1CzwDTN0/KCEwQzsMRnOblduBacmZ4rd5v6t5zXI8M+H3RbFRpw7Z9Hmk0RkhJ6X6rKPnncuZ9+vjbYnEIO+YBMWz5cLFhyqth75qLFuvc7435RDryZDuGNNmUEsw/8yzIoFYYBdb4Sf7wHetbZF4g/pTA2Y/lytYxZYNzJWwTi4oXMWnTlU/JjZ++g0sI0Z5Es1GEZ1uLFlfkNjy+l5H4ANrRQEZ/NJrgAAAA" alt="فلاحين" style="width: 100%; height: 100%; object-fit: contain;">
-                </div>
-                <div class="logo-text">
-                    <h1>فلاحين</h1>
-                    <p>منصتك للفلاحة الذكية</p>
-                </div>
-            </div>
-            <div class="header-actions">
-                <a href="#" class="header-btn btn-login" onclick="showLoginModal(); return false;">
-                    <i class="fas fa-user"></i>
-                    دخول
-                </a>
-                <a href="#" class="header-btn btn-register" onclick="showSignupModal(); return false;">
-                    <i class="fas fa-user-plus"></i>
-                    سجل توّة
-                </a>
+    <div class="header-content">
+        <div class="logo-container">
+            <img src="images/icon-192.png" alt="Logo" class="logo-img">
+            <div class="logo-content">
+                <h1 class="logo-title">فلاحين</h1>
+                <p class="logo-subtitle">منصتك للفلاحة الذكية</p>
             </div>
         </div>
-    </header>
+
+        <div class="header-actions">
+            <a href="#" class="header-btn btn-login" onclick="showLoginModal(); return false;">
+                <i class="fas fa-user"></i> دخول
+            </a>
+            <a href="#" class="header-btn btn-register" onclick="showSignupModal(); return false;">
+                <i class="fas fa-user-plus"></i> تسجيل
+            </a>
+        </div>
+    </div>
+</header>   
 
     <div class="container">
         <!-- Hero Section -->
