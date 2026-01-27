@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاستشارة الزراعية - فلاحين</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary: #2d8659;
+            --primary-dark: #1e6b45;
+            --accent: #f49d37;
+            --text-dark: #2c3e2f;
+            --text-light: #5a6c5b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f5f1e8 0%, #e8dcc8 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 30px rgba(45, 134, 89, 0.15);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 1.2em;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .question-card {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .question-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(45, 134, 89, 0.1);
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 18px;
+            margin: 10px 0;
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: right;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: #f8f9fa;
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(45, 134, 89, 0.1) 0%, rgba(45, 134, 89, 0.05) 100%);
+            font-weight: 700;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.3em;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(45, 134, 89, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-light);
+        }
+
+        .loading i {
+            font-size: 4em;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 5px 30px rgba(45, 134, 89, 0.2);
+            text-align: center;
+        }
+
+        .success-message i {
+            font-size: 5em;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .success-message h2 {
+            color: var(--primary);
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .success-message p {
+            color: var(--text-light);
+            font-size: 1.2em;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">
+            <i class="fas fa-arrow-right"></i>
+            رجوع للصفحة الرئيسية
+        </a>
+
+        <div class="header">
+            <h1>💬 استشارة زراعية</h1>
+            <p>أجب على الأسئلة وسنساعدك</p>
+        </div>
+
+        <div id="consultationContainer">
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <h2>جاري تحميل الأسئلة...</h2>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-z9igQOo7PbKiTzhi2fIRrHHuUXhN6AU",
+            authDomain: "fla7in.firebaseapp.com",
+            projectId: "fla7in",
+            storageBucket: "fla7in.firebasestorage.app",
+            messagingSenderId: "463607450723",
+            appId: "1:463607450723:web:04d95f04873d15634bfc56"
+        };
+
+        let app, db;
+        let questions = [];
+        let answers = {};
+
+        // Initialize Firebase
+        window.addEventListener('load', function() {
+            if (typeof firebase === 'undefined') {
+                alert('خطأ: Firebase غير متاح!');
+                return;
+            }
+
+            try {
+                app = firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                loadQuestions();
+            } catch (error) {
+                console.error('خطأ:', error);
+                alert('خطأ في Firebase: ' + error.message);
+            }
+        });
+
+        // Load Questions from Firestore
+        function loadQuestions() {
+            const container = document.getElementById('consultationContainer');
+            
+            db.collection('questions').orderBy('order').get()
+                .then(function(snapshot) {
+                    if (snapshot.empty) {
+                        container.innerHTML = '<div class="question-card" style="text-align: center;">' +
+                            '<i class="fas fa-question-circle" style="font-size: 5em; color: #ccc;"></i>' +
+                            '<h2>لا توجد أسئلة حالياً</h2>' +
+                            '<p>تحقق لاحقاً!</p>' +
+                            '</div>';
+                        return;
+                    }
+
+                    let html = '<form id="consultationForm">';
+                    let questionIndex = 1;
+                    
+                    snapshot.forEach(function(doc) {
+                        const q = doc.data();
+                        const qId = doc.id;
+                        
+                        html += '<div class="question-card">' +
+                            '<div class="question-number">' + questionIndex + '</div>' +
+                            '<div class="question-text">' + q.question + (q.required ? ' *' : '') + '</div>';
+                        
+                        if (q.type === 'text') {
+                            html += '<textarea class="form-control" id="q_' + qId + '" rows="4" placeholder="اكتب إجابتك هنا..." ' + (q.required ? 'required' : '') + '></textarea>';
+                        } else if (q.type === 'select' || q.type === 'radio') {
+                            if (q.options && q.options.length > 0) {
+                                q.options.forEach(function(opt) {
+                                    html += '<button type="button" class="option-btn" onclick="selectOption(\'' + qId + '\', \'' + opt.value + '\', this)">' +
+                                        (opt.icon ? opt.icon + ' ' : '') + opt.label +
+                                        '</button>';
+                                });
+                                html += '<input type="hidden" id="q_' + qId + '" ' + (q.required ? 'required' : '') + '>';
+                            }
+                        }
+                        
+                        html += '</div>';
+                        questionIndex++;
+                    });
+
+                    html += '<button type="submit" class="submit-btn">' +
+                        '<i class="fas fa-paper-plane"></i> إرسال الاستشارة' +
+                        '</button></form>';
+                    
+                    container.innerHTML = html;
+                    
+                    // Add form submit handler
+                    document.getElementById('consultationForm').addEventListener('submit', submitConsultation);
+                })
+                .catch(function(error) {
+                    container.innerHTML = '<div class="question-card" style="text-align: center;">' +
+                        '<i class="fas fa-exclamation-triangle" style="font-size: 5em; color: #e74c3c;"></i>' +
+                        '<h2>خطأ في التحميل</h2>' +
+                        '<p>' + error.message + '</p>' +
+                        '</div>';
+                });
+        }
+
+        // Select Option
+        function selectOption(questionId, value, button) {
+            // Remove selected from siblings
+            const siblings = button.parentElement.querySelectorAll('.option-btn');
+            siblings.forEach(btn => btn.classList.remove('selected'));
+            
+            // Add selected to this button
+            button.classList.add('selected');
+            
+            // Update hidden input
+            document.getElementById('q_' + questionId).value = value;
+            answers[questionId] = value;
+        }
+
+        // Submit Consultation
+        function submitConsultation(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // Collect all answers
+            const allAnswers = {};
+            form.querySelectorAll('[id^="q_"]').forEach(function(input) {
+                const qId = input.id.replace('q_', '');
+                allAnswers[qId] = input.value;
+            });
+            
+            // Save to Firestore
+            db.collection('consultations').add({
+                answers: allAnswers,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                status: 'pending'
+            })
+            .then(function() {
+                showSuccessMessage();
+            })
+            .catch(function(error) {
+                alert('خطأ في الإرسال: ' + error.message);
+            });
+        }
+
+        // Show Success Message
+        function showSuccessMessage() {
+            document.getElementById('consultationContainer').innerHTML = 
+                '<div class="success-message">' +
+                '<i class="fas fa-check-circle"></i>' +
+                '<h2>شكراً لك!</h2>' +
+                '<p>تمّ إرسال استشارتك بنجاح<br>سنتواصل معك قريباً بالحلول المناسبة</p>' +
+                '<a href="/" class="back-btn" style="display: inline-flex; margin-top: 30px;">' +
+                '<i class="fas fa-home"></i> رجوع للصفحة الرئيسية' +
+                '</a>' +
+                '</div>';
+        }
+    </script>
+</body>
+</html>

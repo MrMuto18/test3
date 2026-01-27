@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - فلاحين</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK - Load FIRST -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary: #2d8659;
+            --primary-dark: #1e6b45;
+            --danger: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo i {
+            font-size: 4em;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .logo h2 {
+            font-size: 2em;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(45, 134, 89, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 134, 89, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 0.85em;
+            color: #666;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .debug-info h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .debug-line {
+            padding: 5px;
+            margin: 2px 0;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="logo">
+            <i class="fas fa-seedling"></i>
+            <h2>لوحة التحكم</h2>
+            <p>فلاحين - مرحباً بك</p>
+        </div>
+
+        <div id="status"></div>
+
+        <form id="loginForm" style="display: none;">
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+                <input type="email" class="form-control" id="adminEmail" value="admin@falla7in.com" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> كلمة السر</label>
+                <input type="password" class="form-control" id="adminPassword" value="admin123" required>
+            </div>
+            <button type="submit" class="btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> دخول
+            </button>
+        </form>
+
+        <div class="debug-info" id="debugInfo">
+            <h4>🔍 معلومات Debug:</h4>
+            <div id="debugLog"></div>
+        </div>
+    </div>
+
+    <script>
+        // Debug logging
+        const debugLog = [];
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('ar-TN');
+            const logEntry = `[${timestamp}] ${message}`;
+            debugLog.push(logEntry);
+            console.log(logEntry);
+            
+            const debugDiv = document.getElementById('debugLog');
+            const line = document.createElement('div');
+            line.className = 'debug-line';
+            line.textContent = logEntry;
+            debugDiv.appendChild(line);
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `alert alert-${type}`;
+            statusDiv.innerHTML = message;
+        }
+
+        // Start initialization
+        log('🚀 بدء تحميل الصفحة...');
+        showStatus('<div class="loading"><div class="spinner"></div><p>جاري التحميل...</p></div>');
+
+        // Check if Firebase is loaded
+        setTimeout(function() {
+            log('⏰ Timeout: بدء فحص Firebase...');
+            
+            if (typeof firebase === 'undefined') {
+                log('❌ Firebase غير موجود!', 'error');
+                showStatus('❌ خطأ: Firebase لم يتم تحميله. الرجاء refresh الصفحة.', 'error');
+                return;
+            }
+            
+            log('✅ Firebase موجود!');
+            
+            // Firebase Configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyC-z9igQOo7PbKiTzhi2fIRrHHuUXhN6AU",
+                authDomain: "fla7in.firebaseapp.com",
+                projectId: "fla7in",
+                storageBucket: "fla7in.firebasestorage.app",
+                messagingSenderId: "463607450723",
+                appId: "1:463607450723:web:04d95f04873d15634bfc56",
+                measurementId: "G-WXN72JJ5DP"
+            };
+
+            try {
+                log('🔥 بدء تهيئة Firebase...');
+                const app = firebase.initializeApp(firebaseConfig);
+                window.auth = firebase.auth();
+                window.db = firebase.firestore();
+                
+                log('✅ Firebase تمّ التهيئة بنجاح!');
+                log(`✅ Project: ${firebaseConfig.projectId}`);
+                
+                // Show login form
+                document.getElementById('loginForm').style.display = 'block';
+                showStatus('✅ النظام جاهز! يمكنك تسجيل الدخول الآن.', 'success');
+                
+                // Setup login handler
+                document.getElementById('loginForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('adminEmail').value;
+                    const password = document.getElementById('adminPassword').value;
+                    const loginBtn = document.getElementById('loginBtn');
+                    
+                    log(`🔐 محاولة الدخول: ${email}`);
+                    loginBtn.disabled = true;
+                    loginBtn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div>';
+                    showStatus('⏳ جاري تسجيل الدخول...', 'info');
+                    
+                    window.auth.signInWithEmailAndPassword(email, password)
+                        .then(function(userCredential) {
+                            log('✅ تمّ الدخول بنجاح!');
+                            log(`👤 User: ${userCredential.user.email}`);
+                            showStatus('✅ تمّ الدخول بنجاح! جاري تحويلك...', 'success');
+                            
+                            setTimeout(function() {
+                                window.location.href = 'dashboard.html';
+                            }, 1000);
+                        })
+                        .catch(function(error) {
+                            log(`❌ خطأ في الدخول: ${error.code}`, 'error');
+                            log(`📝 Message: ${error.message}`, 'error');
+                            
+                            let errorMsg = 'خطأ في الدخول: ';
+                            if (error.code === 'auth/user-not-found') {
+                                errorMsg += 'المستخدم غير موجود';
+                            } else if (error.code === 'auth/wrong-password') {
+                                errorMsg += 'كلمة السر خاطئة';
+                            } else if (error.code === 'auth/invalid-email') {
+                                errorMsg += 'البريد الإلكتروني غير صحيح';
+                            } else {
+                                errorMsg += error.message;
+                            }
+                            
+                            showStatus('❌ ' + errorMsg, 'error');
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول';
+                        });
+                });
+                
+                log('✅ Login handler جاهز!');
+                
+            } catch (error) {
+                log(`❌ خطأ في تهيئة Firebase: ${error.message}`, 'error');
+                showStatus('❌ خطأ في تهيئة Firebase: ' + error.message, 'error');
+            }
+            
+        }, 1000); // Wait 1 second for Firebase scripts to load
+    </script>
+</body>
+</html>
