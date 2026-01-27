@@ -4073,6 +4073,34 @@ window.showOrderSuccess = function(name, total, phone, address, region) {
                     .catch(err => console.log('❌ Service Worker Error', err));
             });
         }
+        function requestNotificationPermission() {
+    Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+            console.log('✅ تم قبول التنبيهات!');
+            // هنا تنجم تبعث التنبيه التجريبي
+            showWelcomeNotification();
+        } else {
+            console.log('❌ المستخدم رفض التنبيهات');
+        }
+    });
+}
+
+// تنبيه ترحيبي بسيط
+function showWelcomeNotification() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then((registration) => {
+            registration.showNotification('فلاحين', {
+                body: 'مرحباً بك! ستحصل على آخر النصائح الفلاحية هنا.',
+                icon: '/images/icon-192.png',
+                badge: '/images/icon-192.png',
+                vibrate: [200, 100, 200]
+            });
+        });
+    }
+}
+
+// نعيطوا للدالة أول ما يتحل الموقع
+requestNotificationPermission();
     </script>   
 
 </body>
