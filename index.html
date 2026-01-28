@@ -21,7 +21,7 @@
             --light-green: #3ea672;
             --accent-orange: #f49d37;
             --dark-orange: #d67d1f;
-            --warm-beige: #f8f6f0;
+            --warm-beige: #f5f1e8;
             --text-dark: #2c3e2f;
             --text-light: #5a6c5b;
             --white: #ffffff;
@@ -1202,7 +1202,10 @@
 
 <section class="hero-section">
     <div class="hero-container">
-        <h1 class="hero-title">🌾 فلاحين - منصة الفلاحة الذكية</h1>
+        <div class="hero-title-container">
+            <h1 class="hero-title">فلاحين - منصة الفلاحة الذكية</h1>
+            <img src="images/icon-192.png" alt="فلاحين" class="hero-logo-icon">
+        </div>
         <p class="hero-subtitle">استشارات زراعية فورية ومنتجات عالية الجودة لفلاحة مربحة</p>
         
         <!-- Statistics -->
@@ -3558,7 +3561,47 @@
         #loginModal button:first-of-type:hover, #signupModal button:first-of-type:hover {
             background: rgba(0, 0, 0, 0.05);
         }
-    </style>
+    
+        /* Hero Title with Logo */
+        .hero-title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .hero-logo-icon {
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 4px 12px rgba(45, 134, 89, 0.3));
+            order: 2; /* Logo على اليسار في RTL */
+        }
+
+        .hero-title {
+            margin: 0;
+            order: 1; /* النص على اليمين في RTL */
+        }
+
+        @media (max-width: 768px) {
+            .hero-title-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .hero-logo-icon {
+                width: 70px;
+                height: 70px;
+                order: 1; /* Logo فوق في الموبايل */
+            }
+            
+            .hero-title {
+                order: 2; /* النص تحت في الموبايل */
+                font-size: 2em !important;
+            }
+        }
+</style>
 
     <script>
         // Modal Functions
