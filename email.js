@@ -5,11 +5,10 @@
 
 const WEB3FORMS_ACCESS_KEY = "73145d99-43d2-4fc9-9625-6b43e7a4a81a";
 
-async function sendOrderNotification(orderData) {
-    console.log('🔄 Bch nab3thou el commande tawa...');
+async function sendOrderNotification(orderData, retryCount = 0) {
+    console.log('📄 Bch nab3thou el commande tawa...');
 
     // 1. Nadhmo el produits fi liste html (Tableau Mzayan)
-    // Hna nekhdhou essem el produit, el quantite, w soumou mel commande s7i7a
     const itemsRows = orderData.items.map(item => 
         `<tr>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.name}</td>
@@ -54,7 +53,7 @@ async function sendOrderNotification(orderData) {
     formData.append("from_name", "Fellahin Store");
     formData.append("message", emailBody);
 
-    // Hna n-hottou el ma3loumet s7i7a k-Metadata (bch tchoufhom f-dashboard ken t7eb)
+    // Metadata (bch tchoufhom f-dashboard)
     formData.append("رقم الطلب", orderData.orderId);
     formData.append("اسم الحريف", orderData.customerName);
     formData.append("الهاتف", orderData.customerPhone);
@@ -73,15 +72,57 @@ async function sendOrderNotification(orderData) {
             return true;
         } else {
             console.error('❌ Fama ghalta mel Web3Forms:', result.message);
+            
+            // 🔄 Retry mechanism: na3mlou 3 times max
+            if (retryCount < 2) {
+                console.log(`🔄 Na3mlou retry... (${retryCount + 1}/2)`);
+                await new Promise(resolve => setTimeout(resolve, 2000)); // استنى ثانيتين
+                return sendOrderNotification(orderData, retryCount + 1);
+            }
             return false;
         }
     } catch (error) {
         console.error('❌ Fama ghalta fil Connexion:', error);
+        
+        // 🔄 Retry mechanism
+        if (retryCount < 2) {
+            console.log(`🔄 Na3mlou retry... (${retryCount + 1}/2)`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            return sendOrderNotification(orderData, retryCount + 1);
+        }
         return false;
     }
 }
 
-// Hathi bch tkhalli index.html ynajem ychouf el function
+// Test function للتأكد من شغل النظام
+async function testEmailSystem() {
+    console.log('🧪 Testing email system...');
+    
+    const testOrder = {
+        orderId: 'TEST-' + Date.now(),
+        customerName: 'محمد التونسي',
+        customerPhone: '22123456',
+        customerRegion: 'تونس العاصمة',
+        customerAddress: 'شارع الحبيب بورقيبة',
+        total: 125.50,
+        items: [
+            { name: 'سماد عضوي', quantity: 2, price: '50.00' },
+            { name: 'بذور طماطم', quantity: 1, price: '25.50' }
+        ]
+    };
+    
+    const success = await sendOrderNotification(testOrder);
+    if (success) {
+        console.log('✅ Test passed! Email system working perfectly.');
+    } else {
+        console.error('❌ Test failed! Check the configuration.');
+    }
+}
+
+// Export للاستخدام في index.html
 window.EmailService = {
-    sendOrderNotification
+    sendOrderNotification,
+    testEmailSystem
 };
+
+console.log('📧 Email Service loaded successfully!');

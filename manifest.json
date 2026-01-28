@@ -5,12 +5,14 @@
     {
       "src": "images/icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "images/icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/index.html",
@@ -18,5 +20,8 @@
   "display": "standalone",
   "scope": "/",
   "theme_color": "#2d8659",
-  "description": "منصة تونسية للاستشارات الزراعية ومتجر المنتجات الفلاحية"
+  "description": "منصة تونسية للاستشارات الزراعية ومتجر المنتجات الفلاحية",
+  "dir": "rtl",
+  "lang": "ar",
+  "orientation": "portrait-primary"
 }
