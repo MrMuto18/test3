@@ -80,34 +80,7 @@
     margin: 0;
 }
 
-/* --- قسم الترحيب (اللوجو الكبير) --- */
-.hero-section {
-    padding: 60px 20px;
-    text-align: center;
-    /* استعملنا تدريج خفيف ليعطي جمالية */
-    background: linear-gradient(180deg, white 0%, var(--warm-beige) 100%);
-}
 
-.hero-logo-large {
-    width: 220px; /* حجم معقول جداً */
-    height: auto;
-    margin-bottom: 25px;
-    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.1));
-}
-
-.hero-welcome {
-    font-size: 2.2rem;
-    color: var(--dark-green);
-    margin-bottom: 15px;
-}
-
-.hero-desc {
-    font-size: 1.1rem;
-    color: var(--text-dark);
-    max-width: 650px;
-    margin: 0 auto;
-    line-height: 1.6;
-}
 
 /* --- الأزرار --- */
 .header-actions {
@@ -1229,9 +1202,24 @@
 
 <section class="hero-section">
     <div class="hero-container">
-        <img src="images/icon-192.png" alt="Falla7in Hero" class="hero-logo-large">
-        <h2 class="hero-welcome">مرحباً بك في فلاحين</h2>
-        <p class="hero-desc">نساعدك في فلاحتك باستشارات ذكية فورية ومنتجات عالية الجودة</p>
+        <h1 class="hero-title">🌾 فلاحين - منصة الفلاحة الذكية</h1>
+        <p class="hero-subtitle">استشارات زراعية فورية ومنتجات عالية الجودة لفلاحة مربحة</p>
+        
+        <!-- Statistics -->
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number">500+</span>
+                <span class="stat-label">فلاح راضي</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">1000+</span>
+                <span class="stat-label">استشارة نجحت</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">50+</span>
+                <span class="stat-label">منتج فلاحي</span>
+            </div>
+        </div>
     </div>
 </section>
         <!-- Navigation Tabs -->
