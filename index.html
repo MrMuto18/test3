@@ -2681,36 +2681,33 @@
             document.querySelector('.progress-bar').style.display = 'none';
             document.querySelector('.progress-text').style.display = 'none';
 
-            // Generate general advice based on user inputs
+            // Generate detailed solutions based on inputs
             let responseHTML = `
-                <h4>🌾 نصائح لفلاحة ${getCropName(crop)}</h4>
-                <p><strong>📊 المعلومات متاعك:</strong></p>
-                <ul>
-                    <li><strong>المحصول:</strong> ${getCropName(crop)}</li>
-                    <li><strong>المساحة:</strong> ${formState.area}</li>
-                    <li><strong>طريقة الري:</strong> ${formState.water}</li>
-                    <li><strong>نوعية التربة:</strong> ${formState.soil}</li>
-                    <li><strong>فترة الزراعة:</strong> ${formState.period}</li>
-                </ul>
+                <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 3px solid var(--primary-green);">
+                    <h3 style="color: var(--primary-green); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.5em;">🌾</span>
+                        <span>${getCropName(crop)} / ${getPeriodName(formState.period)}</span>
+                    </h3>
+                    <div style="background: white; padding: 15px; border-radius: 10px; font-size: 0.95em;">
+                        <strong>📊 معلومات الفلاحة:</strong>
+                        المساحة: ${formState.area} | الري: ${formState.water} | التربة: ${formState.soil}
+                    </div>
+                </div>
 
-                <h4>💡 نصائح عامة:</h4>
-                <ul>
-                    <li>راقب المحصول متاعك بصفة منتظمة للكشف المبكر على أي مشاكل</li>
-                    <li>استخدم أسمدة عضوية لتحسين جودة التربة</li>
-                    <li>حافظ على نظام ري منتظم حسب احتياجات المحصول</li>
-                    <li>نظّف الحقل من الأعشاب الضارة باستمرار</li>
-                    <li>استشر خبير فلاحي لو لاحظت أي تغييرات غير عادية</li>
-                </ul>
-
-                <h4>🛒 منتجات موصى بيها:</h4>
-                <ul>
-                    <li>سماد عضوي طبيعي - يحسّن التربة ويزيد الإنتاج</li>
-                    <li>مبيد حشري طبيعي - حماية صديقة للبيئة</li>
-                    <li>أدوات الري الذكي - توفير في الماء</li>
-                </ul>
-                <p style="margin-top: 20px; font-weight: 700; color: var(--primary-green);">
-                    💡 نصيحة: تلقى كل هذه المنتجات في متجرنا!
-                </p>
+                <h3 style="color: var(--dark-green); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.3em;">💊</span>
+                    <span>الحلول الموصى بها في هذه الفترة:</span>
+                </h3>
+                
+                ${getSolutionsForPeriod(crop, formState.period)}
+                
+                <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); padding: 20px; border-radius: 12px; margin-top: 25px; border: 2px solid var(--accent-orange);">
+                    <p style="margin: 0; font-size: 1.05em; color: var(--text-dark); line-height: 1.7;">
+                        <i class="fas fa-lightbulb" style="color: var(--accent-orange); font-size: 1.3em; margin-left: 8px;"></i>
+                        <strong>نصيحة مهمة:</strong> هذه التوصيات عامة. ننصحك بمراقبة المحصول يومياً وتعديل الجرعات حسب الحالة. 
+                        للحصول على المنتجات، زور <a href="#" onclick="switchTab('products')" style="color: var(--primary-green); text-decoration: underline;">المتجر</a>.
+                    </p>
+                </div>
             `;
 
             document.getElementById('responseContent').innerHTML = responseHTML;
@@ -2731,6 +2728,99 @@
                 'olive': 'الزيتون'
             };
             return names[crop] || crop;
+        }
+
+        function getPeriodName(period) {
+            const names = {
+                'short': 'من 15 إلى 45 يوم بعد الغراسة',
+                'medium': 'من 45 إلى 60 يوم بعد الغراسة',
+                'long': 'من 60 إلى 90 يوم بعد الغراسة',
+                'very-long': 'أكثر من 90 يوم بعد الغراسة'
+            };
+            return names[period] || period;
+        }
+
+        function getSolutionsForPeriod(crop, period) {
+            // قاعدة بيانات كاملة - 4 محاصيل × 4 فترات
+            const solutions = {
+                'tomato': {
+                    'short': [ // 15-45 يوم
+                        { name: 'سماد ورقي NPK متوازن (20-20-20)', dose: '2 كغ / هكتار', reason: 'يعطي دفعة قوية للنمو الخضري ويقوّي النبات في البداية', icon: '🌿' },
+                        { name: 'أحماض أمينية + طحالب بحرية', dose: '0.5 – 1 لتر / هكتار', reason: 'يحسّن الامتصاص ويخفّف السترس بعد الرشة الأولى', icon: '🌊' },
+                        { name: 'كالسيوم + بورون (رش ورقي)', dose: '1 لتر / هكتار', reason: 'يقوّي الأنسجة والقمم النامية ويحضّر النبات للإزهار الجاي', icon: '💪' },
+                        { name: 'مبيد فطري وقائي (مانكوزيب أو Azoxystrobin)', dose: 'حسب الجرعة الموصى بها', reason: 'وقاية من اللفحة والأمراض الورقية في مرحلة نمو سريع', icon: '🛡️' },
+                        { name: 'مبيد حشري (Imidacloprid أو Acetamiprid)', dose: 'حسب المنتَج', reason: 'مكافحة المنّ، الذبابة البيضاء، والتربس اللي يضعّفو النبات بدري', icon: '🐛' }
+                    ],
+                    'medium': [ // 45-60 يوم
+                        { name: 'سماد ورقي عالي الفوسفور (مثال: 13-40-13)', dose: '2 كغ / هكتار', reason: 'يدفع النبات للإزهار ويقوّي العقد الأول', icon: '🌸' },
+                        { name: 'طحالب بحرية + أحماض أمينية', dose: '1 لتر / هكتار', reason: 'يحسّن العقد ويقلّل تساقط الزهرة', icon: '🌊' },
+                        { name: 'بورون + زنك (Foliar B + Zn)', dose: '0.5 – 1 لتر / هكتار', reason: 'عناصر أساسية للإزهار والعقد المنتظم', icon: '⚡' },
+                        { name: 'مبيد فطري (Azoxystrobin أو Difenoconazole)', dose: 'حسب الجرعة الموصى بها', reason: 'حماية الأزهار من اللفحة والبياض في فترة حساسة', icon: '🛡️' },
+                        { name: 'مبيد حشري (Acetamiprid أو Spinosad)', dose: 'حسب المنتَج', reason: 'مكافحة التربس والذبابة البيضاء اللي تأثّر مباشرة على العقد', icon: '🐛' }
+                    ],
+                    'long': [ // 60-90 يوم
+                        { name: 'سيترات البوتاسيوم (Foliar Potassium Citrate)', dose: '2 – 3 كغ / هكتار', reason: 'يضخّم الثمار، يحسّن اللون والطعم، ويساعد على نقل السكريات', icon: '🍅' },
+                        { name: 'طحالب بحرية + أحماض أمينية', dose: '1 لتر / هكتار', reason: 'يقلّل السترس وقت الحمل ويثبّت العقد', icon: '🌊' },
+                        { name: 'كالسيوم ورقي (Calcium nitrate أو Ca chelate)', dose: '1 – 1.5 لتر / هكتار', reason: 'يمنع تعفّن الطرف الزهري ويقوّي جدار الثمرة', icon: '💪' },
+                        { name: 'مبيد فطري (Azoxystrobin + Mancozeb أو بديل بالتناوب)', dose: 'حسب الجرعة', reason: 'حماية الأوراق والثمار من اللفحة في مرحلة حساسة', icon: '🛡️' },
+                        { name: 'مبيد حشري (Spinosad أو Abamectin)', dose: 'حسب المنتَج', reason: 'مكافحة حفّار الأوراق، التربس، والعناكب', icon: '🐛' }
+                    ],
+                    'very-long': [ // +90 يوم
+                        { name: 'سيترات البوتاسيوم (Foliar)', dose: '2 كغ / هكتار', reason: 'يسرّع التلوين، يرفع السكر، ويحسّن الصلابة والطعم', icon: '🍎' },
+                        { name: 'كالسيوم ورقي (Chelated Ca أو Ca nitrate)', dose: '1 لتر / هكتار', reason: 'يحافظ على صلابة الثمرة ويطوّل عمرها بعد الجني', icon: '💪' },
+                        { name: 'أحماض أمينية خفيفة', dose: '0.5 لتر / هكتار', reason: 'يخفّف الإجهاد ويحافظ على نشاط النبات آخر الدورة', icon: '🌿' },
+                        { name: 'مبيد فطري خفيف وآمن (Copper low dose أو Azoxystrobin)', dose: 'حسب الجرعة - عند الحاجة حسب الطقس', reason: 'حماية نهائية من أعفان ونقط الأوراق قبل الجني', icon: '🛡️' },
+                        { name: 'مبيد حشري فترة أمان قصيرة (Spinosad)', dose: 'حسب المنتَج - عند وجود آفات', reason: 'يحمي الثمار بدون مشاكل متبقيات. ⚠️ نوقف أي رش كيميائي قبل الجني بـ 7-10 أيام', icon: '🐛' }
+                    ]
+                }
+            };
+
+            // نستنسخو للمحاصيل الأخرى
+            solutions['pepper'] = JSON.parse(JSON.stringify(solutions['tomato']));
+            solutions['watermelon'] = JSON.parse(JSON.stringify(solutions['tomato']));
+            solutions['melon'] = JSON.parse(JSON.stringify(solutions['tomato']));
+
+            // نعدّلو icons حسب المحصول
+            if (solutions[crop]) {
+                if (crop === 'pepper' && solutions[crop]['long']) solutions[crop]['long'][0].icon = '🌶️';
+                if (crop === 'watermelon' && solutions[crop]['long']) solutions[crop]['long'][0].icon = '🍉';
+                if (crop === 'melon' && solutions[crop]['long']) solutions[crop]['long'][0].icon = '🍈';
+            }
+
+            // نجيب solutions حسب المحصول والفترة
+            const cropSolutions = solutions[crop] || solutions['tomato'];
+            const periodSolutions = cropSolutions[period] || cropSolutions['short'];
+
+            // نصنع HTML
+            let html = '<div class="solutions-list">';
+            
+            periodSolutions.forEach((solution, index) => {
+                html += `
+                    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border-right: 5px solid var(--primary-green); box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+                        <div style="display: flex; align-items: start; gap: 15px; margin-bottom: 12px;">
+                            <span style="font-size: 2em; flex-shrink: 0;">${solution.icon}</span>
+                            <div style="flex: 1;">
+                                <h4 style="color: var(--primary-green); margin: 0 0 8px 0; font-size: 1.15em;">
+                                    ${index + 1}. ${solution.name}
+                                </h4>
+                                <div style="background: var(--warm-beige); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                                    <strong style="color: var(--dark-green);">📏 الجرعة:</strong>
+                                    <span style="color: var(--text-dark); font-weight: 600;">${solution.dose}</span>
+                                </div>
+                                <div style="padding: 10px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 8px;">
+                                    <strong style="color: #1565c0;">💡 علاش؟</strong>
+                                    <p style="margin: 5px 0 0 0; color: var(--text-dark); line-height: 1.6;">
+                                        ${solution.reason}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            return html;
         }
 
         function switchTab(tabName) {
