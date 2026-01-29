@@ -1263,6 +1263,10 @@
                 السلة
                 <i class="fas fa-shopping-cart"></i>
             </button>
+            <button class="nav-tab" data-tab="checkout" style="display: none;" id="checkoutTab">
+                إتمام الطلب
+                <i class="fas fa-credit-card"></i>
+            </button>
         </div>
 
         <!-- Content Area -->
@@ -1285,7 +1289,7 @@
                         <p class="feature-description">كل مشكلة تاخو حلها الخاص حسب فلاحتك ومشكلتك</p>
                     </div>
                     
-                    <div class="feature-card" onclick="switchTab('products')">
+                    <div class="feature-card" onclick="window.location.href='shop.html'" style="cursor: pointer;">
                         <div class="feature-icon">🛒</div>
                         <h3 class="feature-title">منتجات أصلية</h3>
                         <p class="feature-description">كل المنتجات الفلاحية اللي تحتاجها بأفضل الأسعار</p>
@@ -2056,6 +2060,150 @@
                             <i class="fas fa-shopping-bag"></i>
                             ابدا تسوّق
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Checkout Tab -->
+            <div class="tab-content" id="checkout">
+                <h2 class="section-title">إتمام الطلب</h2>
+                <p class="section-subtitle">أكمل بياناتك وأكّد طلبك</p>
+                
+                <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 30px;">
+                    <!-- Order Summary -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <h3 style="color: var(--primary-green); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-receipt"></i>
+                            ملخص الطلب
+                        </h3>
+                        <div id="checkoutSummary"></div>
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--light-gray);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>المجموع الفرعي:</span>
+                                <span id="checkoutSubtotal">0.00 د.ت</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                <span>رسوم التوصيل:</span>
+                                <span>7.00 د.ت</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 1.3em; font-weight: 800; color: var(--primary-green);">
+                                <span>المجموع الكلي:</span>
+                                <span id="checkoutTotal">0.00 د.ت</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checkout Form -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <form id="checkoutForm" style="display: grid; gap: 20px;">
+                            <!-- Customer Info -->
+                            <div>
+                                <h3 style="color: var(--text-dark); margin-bottom: 15px; font-size: 1.1em;">📋 بياناتك الشخصية</h3>
+                                <div style="display: grid; gap: 15px;">
+                                    <div class="form-group">
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 700;">الاسم الكامل *</label>
+                                        <input type="text" id="checkoutName" required style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 10px; font-family: 'Tajawal', sans-serif;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 700;">رقم الهاتف *</label>
+                                        <input type="tel" id="checkoutPhone" required style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 10px; font-family: 'Tajawal', sans-serif;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 700;">البريد الإلكتروني</label>
+                                        <input type="email" id="checkoutEmail" style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 10px; font-family: 'Tajawal', sans-serif;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Shipping Address -->
+                            <div>
+                                <h3 style="color: var(--text-dark); margin-bottom: 15px; font-size: 1.1em;">📍 عنوان التوصيل</h3>
+                                <div style="display: grid; gap: 15px;">
+                                    <div class="form-group">
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 700;">المنطقة *</label>
+                                        <select id="checkoutRegion" required style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 10px; font-family: 'Tajawal', sans-serif;">
+                                            <option value="">اختر المنطقة...</option>
+                                            <option value="tunis">تونس</option>
+                                            <option value="ariana">أريانة</option>
+                                            <option value="ben-arous">بن عروس</option>
+                                            <option value="manouba">منوبة</option>
+                                            <option value="nabeul">نابل</option>
+                                            <option value="zaghouan">زغوان</option>
+                                            <option value="bizerte">بنزرت</option>
+                                            <option value="beja">باجة</option>
+                                            <option value="jendouba">جندوبة</option>
+                                            <option value="kef">الكاف</option>
+                                            <option value="siliana">سليانة</option>
+                                            <option value="kairouan">القيروان</option>
+                                            <option value="kasserine">القصرين</option>
+                                            <option value="sidi-bouzid">سيدي بوزيد</option>
+                                            <option value="sousse">سوسة</option>
+                                            <option value="monastir">المنستير</option>
+                                            <option value="mahdia">المهدية</option>
+                                            <option value="sfax">صفاقس</option>
+                                            <option value="gafsa">قفصة</option>
+                                            <option value="tozeur">توزر</option>
+                                            <option value="kebili">قبلي</option>
+                                            <option value="gabes">قابس</option>
+                                            <option value="medenine">مدنين</option>
+                                            <option value="tataouine">تطاوين</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 700;">العنوان بالتفصيل *</label>
+                                        <textarea id="checkoutAddress" required style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 10px; font-family: 'Tajawal', sans-serif; min-height: 100px; resize: vertical;" placeholder="رقم الشارع، الحي، معلومات إضافية..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Method -->
+                            <div>
+                                <h3 style="color: var(--text-dark); margin-bottom: 15px; font-size: 1.1em;">💳 طريقة الدفع</h3>
+                                <div style="display: grid; gap: 15px;">
+                                    <label style="display: flex; align-items: center; gap: 15px; padding: 15px; border: 2px solid var(--light-gray); border-radius: 10px; cursor: pointer; transition: all 0.3s;">
+                                        <input type="radio" name="paymentMethod" value="cod" checked style="width: auto;">
+                                        <div>
+                                            <div style="font-weight: 700; margin-bottom: 5px;">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                                الدفع عند الاستلام
+                                            </div>
+                                            <div style="font-size: 0.9em; color: #666;">
+                                                ادفع نقداً عند استلام الطلب
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 15px; padding: 15px; border: 2px solid var(--light-gray); border-radius: 10px; cursor: pointer; transition: all 0.3s;">
+                                        <input type="radio" name="paymentMethod" value="bank" style="width: auto;">
+                                        <div>
+                                            <div style="font-weight: 700; margin-bottom: 5px;">
+                                                <i class="fas fa-university"></i>
+                                                تحويل بنكي
+                                            </div>
+                                            <div style="font-size: 0.9em; color: #666;">
+                                                حوّل للحساب البنكي وأرسل الإشعار
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Notes -->
+                            <div>
+                                <h3 style="color: var(--text-dark); margin-bottom: 15px; font-size: 1.1em;">📝 ملاحظات إضافية</h3>
+                                <textarea id="checkoutNotes" style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 10px; font-family: 'Tajawal', sans-serif; min-height: 80px; resize: vertical;" placeholder="أي ملاحظات خاصة بالطلب..."></textarea>
+                            </div>
+
+                            <div style="display: flex; gap: 15px;">
+                                <button type="button" class="btn" onclick="switchTab('cart')" style="flex: 1; background: #999;">
+                                    <i class="fas fa-arrow-right"></i>
+                                    العودة للسلة
+                                </button>
+                                <button type="submit" class="btn btn-next" style="flex: 2;" id="submitOrderBtn">
+                                    <i class="fas fa-check-circle"></i>
+                                    تأكيد الطلب
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -3267,7 +3415,7 @@
                     <div class="cart-total">
                         <h3>المجموع الكلي</h3>
                         <div class="cart-total-price">${total.toFixed(2)} دينار</div>
-                        <button class="btn btn-next" onclick="showCheckoutForm()" style="max-width: 500px; margin: 0 auto;">
+                        <button class="btn btn-next" onclick="goToCheckout()" style="max-width: 500px; margin: 0 auto;">
                             <i class="fas fa-check-circle"></i>
                             أكمل الطلبية
                         </button>
@@ -4466,6 +4614,141 @@ window.showOrderSuccess = function(name, total, phone, address, region) {
     // 2. نزيدوها للصفحة
     document.body.insertAdjacentHTML('beforeend', successHtml);
 };
+
+// ====== CHECKOUT FUNCTIONALITY ======
+
+// Go to Checkout
+function goToCheckout() {
+    if (cart.length === 0) {
+        alert('السلة فارغة!');
+        return;
+    }
+    
+    // Show checkout tab
+    document.getElementById('checkoutTab').style.display = 'block';
+    switchTab('checkout');
+    
+    // Display checkout summary
+    displayCheckoutSummary();
+}
+
+// Display Checkout Summary
+function displayCheckoutSummary() {
+    const summary = document.getElementById('checkoutSummary');
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shipping = 7.00;
+    const total = subtotal + shipping;
+    
+    summary.innerHTML = cart.map(item => `
+        <div style="display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--light-gray);">
+            <div style="font-size: 2.5em;">${item.icon}</div>
+            <div style="flex: 1;">
+                <div style="font-weight: 700;">${item.name}</div>
+                <div style="color: #666; font-size: 0.9em;">الكمية: ${item.quantity}</div>
+            </div>
+            <div style="color: var(--primary-green); font-weight: 700;">${(item.price * item.quantity).toFixed(2)} د.ت</div>
+        </div>
+    `).join('');
+    
+    document.getElementById('checkoutSubtotal').textContent = `${subtotal.toFixed(2)} د.ت`;
+    document.getElementById('checkoutTotal').textContent = `${total.toFixed(2)} د.ت`;
+}
+
+// Submit Checkout Form
+document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitOrderBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة الطلب...';
+    
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shipping = 7.00;
+    const total = subtotal + shipping;
+    
+    const orderData = {
+        customerName: document.getElementById('checkoutName').value,
+        customerPhone: document.getElementById('checkoutPhone').value,
+        customerEmail: document.getElementById('checkoutEmail').value || '',
+        region: document.getElementById('checkoutRegion').value,
+        address: document.getElementById('checkoutAddress').value,
+        paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+        notes: document.getElementById('checkoutNotes').value || '',
+        items: cart,
+        subtotal: subtotal,
+        shipping: shipping,
+        total: total,
+        status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    try {
+        // Save to Firebase
+        const docRef = await db.collection('orders').add(orderData);
+        
+        // Send Email via Web3Forms
+        const formData = new FormData();
+        formData.append('access_key', 'b22f3b51-1e57-41a0-86d0-18ec5b0ea618');
+        formData.append('subject', `طلب جديد #${docRef.id.substring(0, 8)}`);
+        formData.append('from_name', 'فلاحين - المتجر');
+        
+        const emailBody = `
+طلب جديد من المتجر!
+
+رقم الطلب: ${docRef.id}
+
+معلومات العميل:
+- الاسم: ${orderData.customerName}
+- الهاتف: ${orderData.customerPhone}
+- Email: ${orderData.customerEmail || 'غير متوفر'}
+
+عنوان التوصيل:
+- المنطقة: ${orderData.region}
+- العنوان: ${orderData.address}
+
+طريقة الدفع: ${orderData.paymentMethod === 'cod' ? 'الدفع عند الاستلام' : 'تحويل بنكي'}
+
+المنتجات:
+${cart.map(item => `- ${item.name} × ${item.quantity} = ${(item.price * item.quantity).toFixed(2)} د.ت`).join('\n')}
+
+المجموع الفرعي: ${orderData.subtotal.toFixed(2)} د.ت
+التوصيل: ${orderData.shipping.toFixed(2)} د.ت
+المجموع الكلي: ${orderData.total.toFixed(2)} د.ت
+
+${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
+        `;
+        
+        formData.append('message', emailBody);
+        
+        await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            body: formData
+        });
+        
+        // Clear cart
+        cart = [];
+        saveCart();
+        updateCartDisplay();
+        
+        // Hide checkout tab
+        document.getElementById('checkoutTab').style.display = 'none';
+        
+        // Show success message
+        alert('✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.');
+        
+        // Go back to home
+        switchTab('home');
+        
+        // Reset form
+        document.getElementById('checkoutForm').reset();
+        
+    } catch (error) {
+        console.error('Error submitting order:', error);
+        alert('❌ عذراً، حدث خطأ في إرسال الطلب. حاول مرة أخرى.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد الطلب';
+    }
+});
    
    </script>
 
