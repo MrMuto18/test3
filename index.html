@@ -4853,14 +4853,17 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
         // Hide checkout tab
         document.getElementById('checkoutTab').style.display = 'none';
         
+        // Reset form before showing success page
+        const checkoutForm = document.getElementById('checkoutForm');
+        if (checkoutForm) {
+            checkoutForm.reset();
+        }
+        
         // Show success page
         console.log('🎉 Showing success page...');
         console.log('OrderData for success:', orderData);
         console.log('Order ID:', docRef.id);
         showOrderSuccess(orderData, docRef.id);
-        
-        // Reset form
-        document.getElementById('checkoutForm').reset();
         
     } catch (error) {
         console.error('Error submitting order:', error);
