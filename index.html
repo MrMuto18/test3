@@ -4832,15 +4832,80 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
         
         formData.append('message', emailBody);
         
-        // Try to send email (optional - don't fail order if email fails)
+        // Try to send email to admin (optional - don't fail order if email fails)
         try {
             await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
                 body: formData
             });
-            console.log('✅ Email sent successfully');
+            console.log('✅ Admin email sent successfully');
         } catch (emailError) {
-            console.error('⚠️ Email failed but order saved:', emailError);
+            console.error('⚠️ Admin email failed but order saved:', emailError);
+        }
+        
+        // Send confirmation email to customer (if they provided email)
+        if (orderData.customerEmail) {
+            console.log('📧 Sending confirmation email to customer...');
+            try {
+                const customerFormData = new FormData();
+                customerFormData.append('access_key', 'b22f3b51-1e57-41a0-86d0-18ec5b0ea618');
+                customerFormData.append('subject', `تأكيد طلبك #${docRef.id.substring(0, 8).toUpperCase()} - فلاحين`);
+                customerFormData.append('from_name', 'فلاحين');
+                customerFormData.append('email', orderData.customerEmail);
+                
+                const customerEmailBody = `
+مرحباً ${orderData.customerName}،
+
+شكراً لطلبك من فلاحين! 🌾
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 تفاصيل الطلب
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+رقم الطلب: #${docRef.id.substring(0, 8).toUpperCase()}
+
+المنتجات:
+${orderData.items.map(item => `• ${item.icon} ${item.name} × ${item.quantity} = ${(parseFloat(item.price) * parseInt(item.quantity)).toFixed(2)} د.ت`).join('\n')}
+
+المجموع الفرعي: ${orderData.subtotal.toFixed(2)} د.ت
+رسوم التوصيل: ${orderData.shipping.toFixed(2)} د.ت
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+المجموع الكلي: ${orderData.total.toFixed(2)} د.ت
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚚 معلومات التوصيل:
+المنطقة: ${orderData.region}
+العنوان: ${orderData.address}
+الهاتف: ${orderData.customerPhone}
+
+💳 طريقة الدفع: ${orderData.paymentMethod === 'cod' ? 'الدفع عند الاستلام 💵' : 'تحويل بنكي 🏦'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📞 الخطوات القادمة
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ سنتواصل معك خلال 24 ساعة للتأكيد
+📦 سيتم تحضير طلبك فوراً
+🚚 التوصيل خلال 2-4 أيام
+
+💬 للاستفسار: +216 XX XXX XXX
+
+شكراً لثقتك في فلاحين! 🌱
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+www.falla7in.tn
+                `;
+                
+                customerFormData.append('message', customerEmailBody);
+                
+                await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    body: customerFormData
+                });
+                console.log('✅ Customer confirmation email sent');
+            } catch (customerEmailError) {
+                console.error('⚠️ Customer email failed:', customerEmailError);
+            }
         }
         
         console.log('🧹 Clearing cart...');
