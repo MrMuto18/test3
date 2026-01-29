@@ -4861,40 +4861,58 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
                 // Using EmailJS for customer emails (supports sending to different addresses)
                 
                 const EMAILJS_PUBLIC_KEY = '4tU_laKTPlPJNkCxB';
-                const EMAILJS_SERVICE_ID = 'service_w6mcewo';
-                const EMAILJS_TEMPLATE_ID = 'template_9qfubur';
+                const EMAILJS_SERVICE_ID = 'service_fc32t9s';
+                const EMAILJS_TEMPLATE_ID = 'template_19i9uo4';
                 
-                // Prepare template parameters
+                // Prepare template parameters for new template
                 const templateParams = {
                     to_email: orderData.customerEmail,
-                    to_name: orderData.customerName,
-                    order_id: docRef.id.substring(0, 8).toUpperCase(),
                     customer_name: orderData.customerName,
-                    products_list: orderData.items.map(item => 
+                    order_details: orderData.items.map(item => 
                         `• ${item.icon} ${item.name} × ${item.quantity} = ${(parseFloat(item.price) * parseInt(item.quantity)).toFixed(2)} د.ت`
                     ).join('\n'),
-                    subtotal: orderData.subtotal.toFixed(2),
-                    shipping: orderData.shipping.toFixed(2),
-                    total: orderData.total.toFixed(2),
-                    region: orderData.region,
-                    address: orderData.address,
-                    phone: orderData.customerPhone,
-                    payment_method: orderData.paymentMethod === 'cod' ? 'الدفع عند الاستلام 💵' : 'تحويل بنكي 🏦'
+                    total_price: orderData.total.toFixed(2)
                 };
+                
+                console.log('📧 EmailJS Template Params:', templateParams);
+                console.log('🔑 EmailJS Config:', {
+                    publicKey: EMAILJS_PUBLIC_KEY,
+                    serviceId: EMAILJS_SERVICE_ID,
+                    templateId: EMAILJS_TEMPLATE_ID
+                });
                 
                 // Load EmailJS library if not loaded
                 if (typeof emailjs === 'undefined') {
+                    console.log('📦 Loading EmailJS library...');
                     const script = document.createElement('script');
                     script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
                     script.onload = async () => {
+                        console.log('✅ EmailJS library loaded');
                         emailjs.init(EMAILJS_PUBLIC_KEY);
-                        const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-                        console.log('✅ Customer email sent via EmailJS:', response);
+                        console.log('🔐 EmailJS initialized');
+                        try {
+                            const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                            console.log('✅ Customer email sent via EmailJS:', response);
+                            console.log('📧 Email sent to:', templateParams.to_email);
+                        } catch (err) {
+                            console.error('❌ EmailJS send failed:', err);
+                            console.error('Error details:', err.text || err.message);
+                        }
+                    };
+                    script.onerror = () => {
+                        console.error('❌ Failed to load EmailJS library');
                     };
                     document.head.appendChild(script);
                 } else {
-                    const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-                    console.log('✅ Customer email sent via EmailJS:', response);
+                    console.log('✅ EmailJS already loaded');
+                    try {
+                        const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                        console.log('✅ Customer email sent via EmailJS:', response);
+                        console.log('📧 Email sent to:', templateParams.to_email);
+                    } catch (err) {
+                        console.error('❌ EmailJS send failed:', err);
+                        console.error('Error details:', err.text || err.message);
+                    }
                 }
                 
                 
