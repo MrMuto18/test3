@@ -1320,9 +1320,9 @@
                                     <span class="option-icon">🌶️</span>
                                     <div class="option-label">فلفل</div>
                                 </div>
-                                <div class="option-card" data-crop="carrot">
-                                    <span class="option-icon">🥕</span>
-                                    <div class="option-label">سفنارية</div>
+                                <div class="option-card" data-crop="grape">
+                                    <span class="option-icon">🍇</span>
+                                    <div class="option-label">عنب</div>
                                 </div>
                                 <div class="option-card" data-crop="fennel">
                                     <span class="option-icon">🌿</span>
@@ -1352,9 +1352,9 @@
                                     <span class="option-icon">🫘</span>
                                     <div class="option-label">قوارص</div>
                                 </div>
-                                <div class="option-card" data-crop="wheat">
+                                <div class="option-card" data-crop="grains">
                                     <span class="option-icon">🌾</span>
-                                    <div class="option-label">قمح</div>
+                                    <div class="option-label">حبوب</div>
                                 </div>
                                 <div class="option-card" data-crop="olive">
                                     <span class="option-icon">🫒</span>
@@ -1585,66 +1585,80 @@
                             </div>
                         </div>
 
-                        <!-- Tree Question 3: Growth Phase Group 1 -->
+                        <!-- Tree Question 4: Irrigation Type -->
+                        <div class="question-card tree-question" data-question="tree-4" style="display: none;">
+                            <div class="question-title">
+                                <div class="question-icon">💧</div>
+                                كيفاش تسقي؟
+                            </div>
+                            <div class="options-grid">
+                                <div class="option-card" data-tree-water="rainfed">
+                                    <span class="option-icon">🌧️</span>
+                                    <div class="option-label">بعلي (ماء شتوي)</div>
+                                </div>
+                                <div class="option-card" data-tree-water="drip">
+                                    <span class="option-icon">💧</span>
+                                    <div class="option-label">مسقي بالتنقيط</div>
+                                </div>
+                                <div class="option-card" data-tree-water="flood">
+                                    <span class="option-icon">🌊</span>
+                                    <div class="option-label">مسقي غمر</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tree Question 3: Soil Type -->
                         <div class="question-card tree-question" data-question="tree-3" style="display: none;">
+                            <div class="question-title">
+                                <div class="question-icon">🌍</div>
+                                ماهو نوع التربة؟
+                            </div>
+                            <div class="options-grid">
+                                <div class="option-card" data-tree-soil="clay">
+                                    <span class="option-icon">🧱</span>
+                                    <div class="option-label">طينية</div>
+                                    <div style="font-size: 0.85em; color: #666; margin-top: 5px;">كثافة عالية وتحتفظ بالماء</div>
+                                </div>
+                                <div class="option-card" data-tree-soil="sandy">
+                                    <span class="option-icon">🏖️</span>
+                                    <div class="option-label">رملية</div>
+                                    <div style="font-size: 0.85em; color: #666; margin-top: 5px;">خفيفة وسريعة التصريف</div>
+                                </div>
+                                <div class="option-card" data-tree-soil="loamy">
+                                    <span class="option-icon">🌾</span>
+                                    <div class="option-label">مختلطة</div>
+                                    <div style="font-size: 0.85em; color: #666; margin-top: 5px;">رملية طينية متوازنة</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Tree Question 5: Growth Stage -->
+                        <div class="question-card tree-question" data-question="tree-5" style="display: none;">
                             <div class="question-title">
                                 <div class="question-icon">🌳</div>
                                 في أي مرحلة من مراحل النمو؟
                             </div>
                             <div class="options-grid">
-                                <div class="option-card" data-tree-phase1="dormancy">
+                                <div class="option-card" data-tree-stage="dormancy">
                                     <span class="option-icon">🌙</span>
                                     <div class="option-label">فترة السبات</div>
                                 </div>
-                                <div class="option-card" data-tree-phase1="end-dormancy">
-                                    <span class="option-icon">🌱</span>
-                                    <div class="option-label">نهاية السبات</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tree Question 4: Growth Phase Group 2 -->
-                        <div class="question-card tree-question" data-question="tree-4" style="display: none;">
-                            <div class="question-title">
-                                <div class="question-icon">🌸</div>
-                                في أي مرحلة من مراحل النمو؟
-                            </div>
-                            <div class="options-grid">
-                                <div class="option-card" data-tree-phase2="pre-flowering">
+                                <div class="option-card" data-tree-stage="flowering">
                                     <span class="option-icon">🌸</span>
-                                    <div class="option-label">قبل التزهير</div>
+                                    <div class="option-label">فترة التزهير</div>
                                 </div>
-                                <div class="option-card" data-tree-phase2="flowering">
-                                    <span class="option-icon">💐</span>
-                                    <div class="option-label">في التزهير</div>
-                                </div>
-                                <div class="option-card" data-tree-phase2="fruit-set">
+                                <div class="option-card" data-tree-stage="fruit-set">
                                     <span class="option-icon">🌼</span>
                                     <div class="option-label">فترة العقد</div>
                                 </div>
+                                <div class="option-card" data-tree-stage="fruit-ripening">
+                                    <span class="option-icon">🍇</span>
+                                    <div class="option-label">تكوين ونضج الثمار</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Tree Question 5: Growth Phase Group 3 -->
-                        <div class="question-card tree-question" data-question="tree-5" style="display: none;">
-                            <div class="question-title">
-                                <div class="question-icon">🍇</div>
-                                في أي مرحلة من مراحل النمو؟
-                            </div>
-                            <div class="options-grid">
-                                <div class="option-card" data-tree-phase3="fruit-formation">
-                                    <span class="option-icon">🍇</span>
-                                    <div class="option-label">تكوين الثمار</div>
-                                </div>
-                                <div class="option-card" data-tree-phase3="fruit-ripening">
-                                    <span class="option-icon">🟢</span>
-                                    <div class="option-label">نضج الثمار</div>
-                                </div>
-                                <div class="option-card" data-tree-phase3="harvest">
-                                    <span class="option-icon">✂️</span>
-                                    <div class="option-label">القطف</div>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Tree Question 6: User Data -->
@@ -2289,11 +2303,12 @@
         };
 
         // Apply same structure to remaining crops
-        cropDatabase.carrot = cropDatabase.potato;
+        cropDatabase.grape = cropDatabase.potato; // العنب
         cropDatabase.fennel = cropDatabase.potato;
         cropDatabase.watermelon = cropDatabase.tomato;
         cropDatabase.zucchini = cropDatabase.tomato;
         cropDatabase.eggplant = cropDatabase.tomato;
+        cropDatabase.strawberry = cropDatabase.tomato; // الفراولة
 
         // Consultation Form Logic
         const formState = {
@@ -2304,7 +2319,15 @@
             period: '',
             userName: '',
             userPhone: '',
-            userRegion: ''
+            userRegion: '',
+            // Tree-specific fields
+            treeArea: '',
+            treeWater: '',
+            treeSoil: '',
+            treeStage: '',
+            treeUserName: '',
+            treeUserPhone: '',
+            treeUserRegion: ''
         };
 
         let currentQuestion = 1;
@@ -2312,7 +2335,7 @@
         
         // Track if user selected tree crop
         let isTreeCrop = false;
-        const treeCrops = ['olive', 'beans', 'almond'];
+        const treeCrops = ['olive', 'beans', 'almond', 'grains'];
 
         document.addEventListener('DOMContentLoaded', function() {
             setupConsultationForm();
@@ -2390,30 +2413,30 @@
                 });
             });
             
-            // Tree phase 1 (dormancy)
-            document.querySelectorAll('[data-tree-phase1]').forEach(card => {
+            // Tree water (irrigation)
+            document.querySelectorAll('[data-tree-water]').forEach(card => {
                 card.addEventListener('click', function() {
-                    document.querySelectorAll('[data-tree-phase1]').forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    formState.treePhase1 = this.dataset.treePhase1;
+                    document.querySelectorAll('[data-tree-water]').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    formState.treeWater = this.dataset.treeWater;
                 });
             });
             
-            // Tree phase 2 (flowering)
-            document.querySelectorAll('[data-tree-phase2]').forEach(card => {
+            // Tree soil type
+            document.querySelectorAll('[data-tree-soil]').forEach(card => {
                 card.addEventListener('click', function() {
-                    document.querySelectorAll('[data-tree-phase2]').forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    formState.treePhase2 = this.dataset.treePhase2;
+                    document.querySelectorAll('[data-tree-soil]').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    formState.treeSoil = this.dataset.treeSoil;
                 });
             });
             
-            // Tree phase 3 (fruiting)
-            document.querySelectorAll('[data-tree-phase3]').forEach(card => {
+            // Tree growth stage
+            document.querySelectorAll('[data-tree-stage]').forEach(card => {
                 card.addEventListener('click', function() {
-                    document.querySelectorAll('[data-tree-phase3]').forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    formState.treePhase3 = this.dataset.treePhase3;
+                    document.querySelectorAll('[data-tree-stage]').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    formState.treeStage = this.dataset.treeStage;
                 });
             });
 
@@ -2517,6 +2540,81 @@
             document.getElementById('btnSubmit').addEventListener('click', generateResponse);
         }
 
+
+        function attachOptionListeners() {
+            // Period options
+            document.querySelectorAll('.option-card[data-period]').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove active from all period cards
+                    document.querySelectorAll('.option-card[data-period]').forEach(c => c.classList.remove('active'));
+                    // Add active to clicked
+                    this.classList.add('active');
+                    // Save value
+                    formState.period = this.dataset.period;
+                    // Auto-advance
+                    setTimeout(() => {
+                        if (validateQuestion()) nextQuestion();
+                    }, 600);
+                });
+            });
+        }
+
+        function updatePeriodOptions() {
+            const crop = formState.crop;
+            const periodQuestion = document.querySelector('[data-question="6"]');
+            if (!periodQuestion) return;
+            
+            const optionsGrid = periodQuestion.querySelector('.options-grid');
+            
+            // فترات خاصة بالفراولة
+            if (crop === 'strawberry') {
+                optionsGrid.innerHTML = `
+                    <div class="option-card" data-period="short">
+                        <span class="option-icon">🌱</span>
+                        <div class="option-label">من 0 إلى 90 يوم</div>
+                        <div style="font-size: 0.85em; color: #666; margin-top: 5px;">تأسيس النبات</div>
+                    </div>
+                    <div class="option-card" data-period="medium">
+                        <span class="option-icon">🌸</span>
+                        <div class="option-label">من 90 إلى 180 يوم</div>
+                        <div style="font-size: 0.85em; color: #666; margin-top: 5px;">إزهار + تكوين الثمار</div>
+                    </div>
+                    <div class="option-card" data-period="long">
+                        <span class="option-icon">🍓</span>
+                        <div class="option-label">بعد 180 يوم</div>
+                        <div style="font-size: 0.85em; color: #666; margin-top: 5px;">نضج الثمار</div>
+                    </div>
+                `;
+            } else {
+                // فترات عادية لباقي المحاصيل
+                optionsGrid.innerHTML = `
+                    <div class="option-card" data-period="short">
+                        <span class="option-icon">⚡</span>
+                        <div class="option-label">من 15 إلى 45 يوم</div>
+                        <div style="font-size: 0.85em; color: #666; margin-top: 5px;">زراعة سريعة</div>
+                    </div>
+                    <div class="option-card" data-period="medium">
+                        <span class="option-icon">🌱</span>
+                        <div class="option-label">من 45 إلى 60 يوم</div>
+                        <div style="font-size: 0.85em; color: #666; margin-top: 5px;">زراعة متوسطة</div>
+                    </div>
+                    <div class="option-card" data-period="long">
+                        <span class="option-icon">🌾</span>
+                        <div class="option-label">من 60 إلى 90 يوم</div>
+                        <div style="font-size: 0.85em; color: #666; margin-top: 5px;">زراعة طويلة</div>
+                    </div>
+                    <div class="option-card" data-period="very-long">
+                        <span class="option-icon">🌳</span>
+                        <div class="option-label">أكثر من 90 يوم</div>
+                        <div style="font-size: 0.85em; color: #666; margin-top: 5px;">زراعة طويلة جداً</div>
+                    </div>
+                `;
+            }
+            
+            // Re-attach event listeners
+            attachOptionListeners();
+        }
+
         function nextQuestion() {
             if (!validateQuestion()) {
                 alert('الرجاء إكمال هذا السؤال');
@@ -2549,6 +2647,11 @@
                 if (currentQuestion < totalQuestions) {
                     currentQuestion++;
                 }
+            }
+            
+            // Update period options if reaching question 6
+            if (currentQuestion === 6 && !isTreeCrop) {
+                updatePeriodOptions();
             }
             
             // Show next question
@@ -2607,9 +2710,9 @@
                 switch(currentQuestion) {
                     case 1: return formState.crop !== '';
                     case 'tree-2': return formState.treeArea !== undefined && formState.treeArea !== '';
-                    case 'tree-3': return formState.treePhase1 !== undefined && formState.treePhase1 !== '';
-                    case 'tree-4': return formState.treePhase2 !== undefined && formState.treePhase2 !== '';
-                    case 'tree-5': return formState.treePhase3 !== undefined && formState.treePhase3 !== '';
+                    case 'tree-3': return formState.treeSoil !== undefined && formState.treeSoil !== '';
+                    case 'tree-4': return formState.treeWater !== undefined && formState.treeWater !== '';
+                    case 'tree-5': return formState.treeStage !== undefined && formState.treeStage !== '';
                     case 'tree-6':
                         const treeName = document.getElementById('treeUserName')?.value.trim() || '';
                         const treePhone = document.getElementById('treeUserPhone')?.value.trim() || '';
@@ -2669,12 +2772,6 @@
             if (!validateQuestion()) return;
             
             const crop = formState.crop;
-            const cropInfo = cropDatabase[crop];
-            
-            if (!cropInfo) {
-                alert('عذراً، حدث خطأ. جرّب مرة أخرى.');
-                return;
-            }
 
             // Hide form
             document.getElementById('consultationForm').style.display = 'none';
@@ -2720,12 +2817,14 @@
             const names = {
                 'tomato': 'الطماطم',
                 'pepper': 'الفلفل',
-                'carrot': 'السفنارية',
+                'grape': 'العنب',
                 'fennel': 'البسباس',
                 'potato': 'البطاطا',
                 'watermelon': 'البطيخ',
-                'wheat': 'القمح',
-                'olive': 'الزيتون'
+                'grains': 'الحبوب',
+                'olive': 'الزيتون',
+                'strawberry': 'الفراولة',
+                'melon': 'الدلاع'
             };
             return names[crop] || crop;
         }
