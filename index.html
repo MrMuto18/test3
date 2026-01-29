@@ -29,6 +29,10 @@
             --shadow: rgba(45, 134, 89, 0.15);
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -41,6 +45,8 @@
     font-family: 'Tajawal', sans-serif;
     margin: 0;
     direction: rtl;
+    min-height: 100vh;
+    overflow-y: auto;
 }
 
 /* --- الهيدر مريغل --- */
@@ -313,7 +319,7 @@
         .question-card {
             display: none;
             animation: fadeIn 0.5s ease;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
 
         .question-card.active {
@@ -357,7 +363,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
 
         .option-card {
@@ -376,7 +382,8 @@
             box-shadow: 0 10px 25px var(--shadow);
         }
 
-        .option-card.selected {
+        .option-card.selected,
+        .option-card.active {
             border-color: var(--primary-green);
             background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
             color: white;
@@ -2768,7 +2775,7 @@
             btnSubmit.style.display = isLastQuestion ? 'flex' : 'none';
         }
 
-        function generateResponse() {
+        async function generateResponse() {
             if (!validateQuestion()) return;
             
             const crop = formState.crop;
@@ -2801,9 +2808,31 @@
                 <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); padding: 20px; border-radius: 12px; margin-top: 25px; border: 2px solid var(--accent-orange);">
                     <p style="margin: 0; font-size: 1.05em; color: var(--text-dark); line-height: 1.7;">
                         <i class="fas fa-lightbulb" style="color: var(--accent-orange); font-size: 1.3em; margin-left: 8px;"></i>
-                        <strong>نصيحة مهمة:</strong> هذه التوصيات عامة. ننصحك بمراقبة المحصول يومياً وتعديل الجرعات حسب الحالة. 
-                        للحصول على المنتجات، زور <a href="#" onclick="switchTab('products')" style="color: var(--primary-green); text-decoration: underline;">المتجر</a>.
+                        <strong>نصيحة مهمة:</strong> هذه التوصيات عامة. ننصحك بمراقبة المحصول يومياً وتعديل الجرعات حسب الحالة.
                     </p>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 30px; border-radius: 15px; margin-top: 30px; border: 3px solid #2196f3;">
+                    <h3 style="color: #1565c0; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.5em;">📦</span>
+                        <span>Pack المنتجات الموصى بها</span>
+                    </h3>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <p style="margin: 0 0 15px 0; color: var(--text-dark); font-size: 1.05em;">
+                            نقترح عليك هذه المنتجات اللي تلزمك للحلول الموصى بها:
+                        </p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                            ${await getProductsForSolutions(crop, formState.period)}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="switchTab('products')" style="background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%); color: white; border: none; padding: 15px 40px; border-radius: 10px; font-size: 1.1em; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(45, 134, 89, 0.3); transition: all 0.3s ease;">
+                            🛒 زور المتجر
+                        </button>
+                    </div>
                 </div>
             `;
 
@@ -2811,6 +2840,56 @@
             document.getElementById('responseBox').classList.add('show');
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function getProductsForSolutions(crop, period) {
+            // جلب الـ pack من Firebase
+            try {
+                const snapshot = await db.collection('packs')
+                    .where('crop', '==', crop)
+                    .where('period', '==', period)
+                    .limit(1)
+                    .get();
+                
+                let products = [];
+                
+                if (!snapshot.empty) {
+                    // استخدام الـ pack من Firebase
+                    const pack = snapshot.docs[0].data();
+                    products = pack.products;
+                } else {
+                    // استخدام منتجات افتراضية
+                    products = [
+                        { name: 'سماد NPK ورقي', price: '45 د.ت', icon: '🌿', description: 'سماد متوازن للنمو' },
+                        { name: 'أحماض أمينية', price: '35 د.ت', icon: '🌊', description: 'يحسّن الامتصاص' },
+                        { name: 'كالسيوم + بورون', price: '40 د.ت', icon: '💪', description: 'يقوّي الأنسجة' },
+                        { name: 'مبيد فطري وقائي', price: '55 د.ت', icon: '🛡️', description: 'حماية من الأمراض' },
+                        { name: 'مبيد حشري طبيعي', price: '50 د.ت', icon: '🐛', description: 'مكافحة الآفات' }
+                    ];
+                }
+                
+                let html = '';
+                products.forEach(product => {
+                    html += `
+                        <div style="background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%); padding: 15px; border-radius: 10px; text-align: center; transition: all 0.3s ease; cursor: pointer; border: 2px solid transparent;" onmouseover="this.style.borderColor='var(--primary-green)'; this.style.transform='translateY(-5px)'" onmouseout="this.style.borderColor='transparent'; this.style.transform='translateY(0)'">
+                            <div style="font-size: 2.5em; margin-bottom: 10px;">${product.icon}</div>
+                            <div style="font-weight: 700; font-size: 1em; color: var(--text-dark); margin-bottom: 5px;">${product.name}</div>
+                            <div style="font-size: 0.85em; color: #666; margin-bottom: 10px;">${product.description}</div>
+                            <div style="color: var(--primary-green); font-weight: 800; font-size: 1.1em;">${product.price}</div>
+                        </div>
+                    `;
+                });
+                
+                return html;
+            } catch (error) {
+                console.error('Error loading pack:', error);
+                // return default products on error
+                return `
+                    <div style="text-align: center; padding: 20px; color: #999;">
+                        <p>سيتم عرض المنتجات قريباً</p>
+                    </div>
+                `;
+            }
         }
 
         function getCropName(crop) {
