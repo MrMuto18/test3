@@ -4582,7 +4582,7 @@ function goToCheckout() {
 // Display Checkout Summary
 function displayCheckoutSummary() {
     const summary = document.getElementById('checkoutSummary');
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * parseInt(item.quantity)), 0);
     const shipping = 7.00;
     const total = subtotal + shipping;
     
@@ -4593,7 +4593,7 @@ function displayCheckoutSummary() {
                 <div style="font-weight: 700;">${item.name}</div>
                 <div style="color: #666; font-size: 0.9em;">الكمية: ${item.quantity}</div>
             </div>
-            <div style="color: var(--primary-green); font-weight: 700;">${(item.price * item.quantity).toFixed(2)} د.ت</div>
+            <div style="color: var(--primary-green); font-weight: 700;">${(parseFloat(item.price) * parseInt(item.quantity)).toFixed(2)} د.ت</div>
         </div>
     `).join('');
     
@@ -4733,27 +4733,6 @@ function showOrderSuccess(orderData, orderId) {
 }
 
 // Display Checkout Summary
-function displayCheckoutSummary() {
-    const summary = document.getElementById('checkoutSummary');
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = 7.00;
-    const total = subtotal + shipping;
-    
-    summary.innerHTML = cart.map(item => `
-        <div style="display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--light-gray);">
-            <div style="font-size: 2.5em;">${item.icon}</div>
-            <div style="flex: 1;">
-                <div style="font-weight: 700;">${item.name}</div>
-                <div style="color: #666; font-size: 0.9em;">الكمية: ${item.quantity}</div>
-            </div>
-            <div style="color: var(--primary-green); font-weight: 700;">${(item.price * item.quantity).toFixed(2)} د.ت</div>
-        </div>
-    `).join('');
-    
-    document.getElementById('checkoutSubtotal').textContent = `${subtotal.toFixed(2)} د.ت`;
-    document.getElementById('checkoutTotal').textContent = `${total.toFixed(2)} د.ت`;
-}
-
 // Submit Checkout Form
 document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -4762,7 +4741,7 @@ document.getElementById('checkoutForm').addEventListener('submit', async (e) => 
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة الطلب...';
     
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * parseInt(item.quantity)), 0);
     const shipping = 7.00;
     const total = subtotal + shipping;
     
@@ -4775,9 +4754,9 @@ document.getElementById('checkoutForm').addEventListener('submit', async (e) => 
         paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
         notes: document.getElementById('checkoutNotes').value || '',
         items: cart,
-        subtotal: subtotal,
-        shipping: shipping,
-        total: total,
+        subtotal: parseFloat(subtotal.toFixed(2)),
+        shipping: parseFloat(shipping.toFixed(2)),
+        total: parseFloat(total.toFixed(2)),
         status: 'pending',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
