@@ -3628,11 +3628,6 @@
             .then(async () => {
                 console.log('✅ تسجلت في Firebase');
                 
-                // نبعثو الإيميل عن طريق email.js
-                if (window.EmailService) {
-                    await window.EmailService.sendOrderNotification(orderData);
-                }
-                
                 // نظهروا رسالة النجاح ونفرغو السلة
                 showThankYouMessage(orderData);
                 cart = [];
@@ -3646,11 +3641,8 @@
                 alert('فمة مشكلة في السيستام، عاود جرب مبعد.');
             });
     } else {
-        // في حالة الـ Firebase ماهوش يخدم، نبعثو الإيميل طول
-        if (window.EmailService) {
-            await window.EmailService.sendOrderNotification(orderData);
-            alert("تم إرسال طلبك عبر البريد!");
-        }
+        // في حالة الـ Firebase ماهوش يخدم
+        alert("تم إرسال طلبك!");
     }
 };
         
@@ -4799,7 +4791,7 @@ document.getElementById('checkoutForm').addEventListener('submit', async (e) => 
         // Send Email via Web3Forms
         console.log('📧 Sending email...');
         const formData = new FormData();
-        formData.append('access_key', 'b22f3b51-1e57-41a0-86d0-18ec5b0ea618');
+        formData.append('access_key', '73145d99-43d2-4fc9-9625-6b43e7a4a81a');
         formData.append('subject', `طلب جديد #${docRef.id.substring(0, 8)}`);
         formData.append('from_name', 'فلاحين - المتجر');
         formData.append('email', orderData.customerEmail || orderData.customerPhone + '@falla7in.com');
@@ -4834,11 +4826,19 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
         
         // Try to send email to admin (optional - don't fail order if email fails)
         try {
-            await fetch('https://api.web3forms.com/submit', {
+            const emailResponse = await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
                 body: formData
             });
-            console.log('✅ Admin email sent successfully');
+            
+            const emailData = await emailResponse.json();
+            console.log('📧 Admin email response:', emailResponse.status, emailData);
+            
+            if (emailResponse.ok && emailData.success) {
+                console.log('✅ Admin email sent successfully');
+            } else {
+                console.error('⚠️ Admin email failed:', emailData.message);
+            }
         } catch (emailError) {
             console.error('⚠️ Admin email failed but order saved:', emailError);
         }
@@ -4846,9 +4846,10 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
         // Send confirmation email to customer (if they provided email)
         if (orderData.customerEmail) {
             console.log('📧 Sending confirmation email to customer...');
+            console.log('Customer email:', orderData.customerEmail);
             try {
                 const customerFormData = new FormData();
-                customerFormData.append('access_key', 'b22f3b51-1e57-41a0-86d0-18ec5b0ea618');
+                customerFormData.append('access_key', '73145d99-43d2-4fc9-9625-6b43e7a4a81a');
                 customerFormData.append('subject', `تأكيد طلبك #${docRef.id.substring(0, 8).toUpperCase()} - فلاحين`);
                 customerFormData.append('from_name', 'فلاحين');
                 customerFormData.append('email', orderData.customerEmail);
@@ -4898,14 +4899,24 @@ www.falla7in.tn
                 
                 customerFormData.append('message', customerEmailBody);
                 
-                await fetch('https://api.web3forms.com/submit', {
+                const customerEmailResponse = await fetch('https://api.web3forms.com/submit', {
                     method: 'POST',
                     body: customerFormData
                 });
-                console.log('✅ Customer confirmation email sent');
+                
+                const customerEmailData = await customerEmailResponse.json();
+                console.log('📧 Customer email response:', customerEmailResponse.status, customerEmailData);
+                
+                if (customerEmailResponse.ok && customerEmailData.success) {
+                    console.log('✅ Customer confirmation email sent');
+                } else {
+                    console.error('⚠️ Customer email failed:', customerEmailData.message);
+                }
             } catch (customerEmailError) {
                 console.error('⚠️ Customer email failed:', customerEmailError);
             }
+        } else {
+            console.log('⏭️ No customer email provided, skipping customer notification');
         }
         
         console.log('🧹 Clearing cart...');
