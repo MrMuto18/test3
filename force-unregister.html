@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>🔧 إصلاح EmailService</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: white;
+            color: #333;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 { color: #e74c3c; }
+        button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px 5px;
+            font-weight: bold;
+        }
+        button:hover { background: #c0392b; }
+        button.success { background: #27ae60; }
+        button.success:hover { background: #229954; }
+        #status {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d4edda; color: #155724; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        #logs {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        .log-line { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 إصلاح مشكلة EmailService</h1>
+        
+        <div id="status" class="error">
+            ❌ <strong>المشكلة:</strong> Service Worker يحاول تحميل email.js (محذوف)
+        </div>
+
+        <h2>الحل:</h2>
+        <ol>
+            <li><strong>حذف كل Service Workers</strong> (الأزرق الكبير)</li>
+            <li><strong>مسح كل Caches</strong></li>
+            <li><strong>Reload الصفحة</strong></li>
+        </ol>
+
+        <button onclick="fixEverything()" style="font-size: 20px; padding: 20px 40px;">
+            🚀 إصلاح كل شيء الآن!
+        </button>
+
+        <button onclick="checkStatus()" style="background: #3498db;">
+            🔍 فحص الحالة
+        </button>
+
+        <button onclick="goToSite()" class="success">
+            ✅ فتح الموقع
+        </button>
+
+        <div id="logs">
+            <div class="log-line">📋 Logs:</div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, color = '#333') {
+            const logsDiv = document.getElementById('logs');
+            const time = new Date().toLocaleTimeString('ar-TN');
+            logsDiv.innerHTML += `<div class="log-line" style="color: ${color};">[${time}] ${message}</div>`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+            console.log(message);
+        }
+
+        async function fixEverything() {
+            log('🚀 بدء الإصلاح الشامل...', '#2d8659');
+            
+            try {
+                // 1. Unregister all service workers
+                log('🔧 حذف Service Workers...');
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    log(`📊 عدد Service Workers: ${registrations.length}`);
+                    
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        log(`✅ تم حذف: ${registration.scope}`, 'green');
+                    }
+                } else {
+                    log('⚠️ Service Workers غير مدعوم', 'orange');
+                }
+
+                // 2. Clear all caches
+                log('🧹 مسح Caches...');
+                const cacheNames = await caches.keys();
+                log(`📊 عدد Caches: ${cacheNames.length}`);
+                
+                for (let cacheName of cacheNames) {
+                    await caches.delete(cacheName);
+                    log(`✅ تم حذف cache: ${cacheName}`, 'green');
+                }
+
+                // 3. Clear storage
+                log('🗑️ مسح LocalStorage...');
+                localStorage.clear();
+                sessionStorage.clear();
+                log('✅ تم مسح Storage', 'green');
+
+                // 4. Success
+                log('🎉 تم الإصلاح بنجاح!', '#27ae60');
+                document.getElementById('status').className = 'success';
+                document.getElementById('status').innerHTML = '✅ <strong>تم الإصلاح!</strong> الآن اضغط "فتح الموقع"';
+
+            } catch (error) {
+                log('❌ خطأ: ' + error.message, 'red');
+                document.getElementById('status').className = 'error';
+                document.getElementById('status').innerHTML = '❌ فشل: ' + error.message;
+            }
+        }
+
+        async function checkStatus() {
+            log('🔍 فحص الحالة...', '#3498db');
+            
+            try {
+                // Check SW
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    if (registrations.length > 0) {
+                        log(`⚠️ ${registrations.length} Service Worker(s) موجود`, 'orange');
+                        registrations.forEach(reg => {
+                            log(`  - ${reg.scope}`, 'orange');
+                        });
+                    } else {
+                        log('✅ لا يوجد Service Workers', 'green');
+                    }
+                }
+
+                // Check caches
+                const cacheNames = await caches.keys();
+                if (cacheNames.length > 0) {
+                    log(`⚠️ ${cacheNames.length} Cache(s) موجود`, 'orange');
+                    cacheNames.forEach(name => {
+                        log(`  - ${name}`, 'orange');
+                    });
+                } else {
+                    log('✅ لا يوجد Caches', 'green');
+                }
+
+                // Check storage
+                const lsCount = localStorage.length;
+                log(`📊 LocalStorage items: ${lsCount}`, lsCount > 0 ? 'orange' : 'green');
+
+            } catch (error) {
+                log('❌ خطأ: ' + error.message, 'red');
+            }
+        }
+
+        function goToSite() {
+            log('🌐 فتح الموقع...', '#2d8659');
+            window.location.href = 'index.html?' + Date.now();
+        }
+
+        // Auto check on load
+        window.addEventListener('load', () => {
+            log('✅ الصفحة جاهزة', '#2d8659');
+            checkStatus();
+        });
+    </script>
+</body>
+</html>
