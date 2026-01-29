@@ -4603,8 +4603,24 @@ function displayCheckoutSummary() {
 
 // Show Order Success Page
 function showOrderSuccess(orderData, orderId) {
+    console.log('📄 showOrderSuccess called');
+    console.log('orderData:', orderData);
+    console.log('orderId:', orderId);
+    console.log('orderData types:', {
+        subtotal: typeof orderData.subtotal,
+        shipping: typeof orderData.shipping,
+        total: typeof orderData.total
+    });
+    
     // Switch to a success tab or show in checkout area
     const checkoutContent = document.getElementById('checkout');
+    
+    if (!checkoutContent) {
+        console.error('❌ Element #checkout not found!');
+        return;
+    }
+    
+    console.log('✅ Element #checkout found');
     
     const successHTML = `
         <div style="text-align: center; padding: 60px 20px; max-width: 800px; margin: 0 auto;">
@@ -4728,8 +4744,13 @@ function showOrderSuccess(orderData, orderId) {
         </style>
     `;
     
+    console.log('🎨 Setting innerHTML...');
     checkoutContent.innerHTML = successHTML;
+    console.log('✅ innerHTML set successfully');
+    
+    console.log('🔄 Switching to checkout tab...');
     switchTab('checkout');
+    console.log('✅ Success page displayed!');
 }
 
 // Display Checkout Summary
@@ -4737,13 +4758,19 @@ function showOrderSuccess(orderData, orderId) {
 document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    console.log('🚀 Form submitted!');
+    
     const submitBtn = document.getElementById('submitOrderBtn');
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة الطلب...';
     
+    console.log('📦 Cart:', cart);
+    
     const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * parseInt(item.quantity)), 0);
     const shipping = 7.00;
     const total = subtotal + shipping;
+    
+    console.log('💰 Totals:', {subtotal, shipping, total});
     
     const orderData = {
         customerName: document.getElementById('checkoutName').value,
@@ -4761,11 +4788,16 @@ document.getElementById('checkoutForm').addEventListener('submit', async (e) => 
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     
+    console.log('📋 Order Data:', orderData);
+    
     try {
+        console.log('💾 Saving to Firebase...');
         // Save to Firebase
         const docRef = await db.collection('orders').add(orderData);
+        console.log('✅ Saved! Order ID:', docRef.id);
         
         // Send Email via Web3Forms
+        console.log('📧 Sending email...');
         const formData = new FormData();
         formData.append('access_key', 'b22f3b51-1e57-41a0-86d0-18ec5b0ea618');
         formData.append('subject', `طلب جديد #${docRef.id.substring(0, 8)}`);
@@ -4811,6 +4843,7 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
             console.error('⚠️ Email failed but order saved:', emailError);
         }
         
+        console.log('🧹 Clearing cart...');
         // Clear cart
         cart = [];
         localStorage.setItem('falla7inCart', JSON.stringify(cart));
@@ -4821,6 +4854,9 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
         document.getElementById('checkoutTab').style.display = 'none';
         
         // Show success page
+        console.log('🎉 Showing success page...');
+        console.log('OrderData for success:', orderData);
+        console.log('Order ID:', docRef.id);
         showOrderSuccess(orderData, docRef.id);
         
         // Reset form
@@ -4828,7 +4864,16 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
         
     } catch (error) {
         console.error('Error submitting order:', error);
-        alert('❌ عذراً، حدث خطأ في إرسال الطلب. حاول مرة أخرى.');
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            orderData: orderData
+        });
+        
+        alert('❌ عذراً، حدث خطأ في إرسال الطلب.\n\n' + 
+              'التفاصيل: ' + error.message + '\n\n' +
+              'افتح Console (F12) لمزيد من المعلومات.');
+        
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد الطلب';
     }
