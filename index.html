@@ -4691,6 +4691,7 @@ document.getElementById('checkoutForm').addEventListener('submit', async (e) => 
         formData.append('access_key', 'b22f3b51-1e57-41a0-86d0-18ec5b0ea618');
         formData.append('subject', `طلب جديد #${docRef.id.substring(0, 8)}`);
         formData.append('from_name', 'فلاحين - المتجر');
+        formData.append('email', orderData.customerEmail || orderData.customerPhone + '@falla7in.com');
         
         const emailBody = `
 طلب جديد من المتجر!
@@ -4720,15 +4721,22 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
         
         formData.append('message', emailBody);
         
-        await fetch('https://api.web3forms.com/submit', {
-            method: 'POST',
-            body: formData
-        });
+        // Try to send email (optional - don't fail order if email fails)
+        try {
+            await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData
+            });
+            console.log('✅ Email sent successfully');
+        } catch (emailError) {
+            console.error('⚠️ Email failed but order saved:', emailError);
+        }
         
         // Clear cart
         cart = [];
-        saveCart();
-        updateCartDisplay();
+        localStorage.setItem('falla7inCart', JSON.stringify(cart));
+        updateCartBadge();
+        displayCart();
         
         // Hide checkout tab
         document.getElementById('checkoutTab').style.display = 'none';
