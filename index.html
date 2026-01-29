@@ -4856,71 +4856,48 @@ ${orderData.notes ? `ملاحظات: ${orderData.notes}` : ''}
         if (orderData.customerEmail) {
             console.log('📧 Sending confirmation email to customer...');
             console.log('Customer email:', orderData.customerEmail);
+            
             try {
-                const customerFormData = new FormData();
-                customerFormData.append('access_key', '73145d99-43d2-4fc9-9625-6b43e7a4a81a');
-                customerFormData.append('subject', `تأكيد طلبك #${docRef.id.substring(0, 8).toUpperCase()} - فلاحين`);
-                customerFormData.append('from_name', 'فلاحين');
-                customerFormData.append('email', orderData.customerEmail);
+                // Using EmailJS for customer emails (supports sending to different addresses)
                 
-                const customerEmailBody = `
-مرحباً ${orderData.customerName}،
-
-شكراً لطلبك من فلاحين! 🌾
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 تفاصيل الطلب
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-رقم الطلب: #${docRef.id.substring(0, 8).toUpperCase()}
-
-المنتجات:
-${orderData.items.map(item => `• ${item.icon} ${item.name} × ${item.quantity} = ${(parseFloat(item.price) * parseInt(item.quantity)).toFixed(2)} د.ت`).join('\n')}
-
-المجموع الفرعي: ${orderData.subtotal.toFixed(2)} د.ت
-رسوم التوصيل: ${orderData.shipping.toFixed(2)} د.ت
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-المجموع الكلي: ${orderData.total.toFixed(2)} د.ت
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🚚 معلومات التوصيل:
-المنطقة: ${orderData.region}
-العنوان: ${orderData.address}
-الهاتف: ${orderData.customerPhone}
-
-💳 طريقة الدفع: ${orderData.paymentMethod === 'cod' ? 'الدفع عند الاستلام 💵' : 'تحويل بنكي 🏦'}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-📞 الخطوات القادمة
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-✅ سنتواصل معك خلال 24 ساعة للتأكيد
-📦 سيتم تحضير طلبك فوراً
-🚚 التوصيل خلال 2-4 أيام
-
-💬 للاستفسار: +216 XX XXX XXX
-
-شكراً لثقتك في فلاحين! 🌱
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-www.falla7in.tn
-                `;
+                const EMAILJS_PUBLIC_KEY = '4tU_laKTPlPJNkCxB';
+                const EMAILJS_SERVICE_ID = 'service_w6mcewo';
+                const EMAILJS_TEMPLATE_ID = 'template_9qfubur';
                 
-                customerFormData.append('message', customerEmailBody);
+                // Prepare template parameters
+                const templateParams = {
+                    to_email: orderData.customerEmail,
+                    to_name: orderData.customerName,
+                    order_id: docRef.id.substring(0, 8).toUpperCase(),
+                    customer_name: orderData.customerName,
+                    products_list: orderData.items.map(item => 
+                        `• ${item.icon} ${item.name} × ${item.quantity} = ${(parseFloat(item.price) * parseInt(item.quantity)).toFixed(2)} د.ت`
+                    ).join('\n'),
+                    subtotal: orderData.subtotal.toFixed(2),
+                    shipping: orderData.shipping.toFixed(2),
+                    total: orderData.total.toFixed(2),
+                    region: orderData.region,
+                    address: orderData.address,
+                    phone: orderData.customerPhone,
+                    payment_method: orderData.paymentMethod === 'cod' ? 'الدفع عند الاستلام 💵' : 'تحويل بنكي 🏦'
+                };
                 
-                const customerEmailResponse = await fetch('https://api.web3forms.com/submit', {
-                    method: 'POST',
-                    body: customerFormData
-                });
-                
-                const customerEmailData = await customerEmailResponse.json();
-                console.log('📧 Customer email response:', customerEmailResponse.status, customerEmailData);
-                
-                if (customerEmailResponse.ok && customerEmailData.success) {
-                    console.log('✅ Customer confirmation email sent');
+                // Load EmailJS library if not loaded
+                if (typeof emailjs === 'undefined') {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+                    script.onload = async () => {
+                        emailjs.init(EMAILJS_PUBLIC_KEY);
+                        const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                        console.log('✅ Customer email sent via EmailJS:', response);
+                    };
+                    document.head.appendChild(script);
                 } else {
-                    console.error('⚠️ Customer email failed:', customerEmailData.message);
+                    const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                    console.log('✅ Customer email sent via EmailJS:', response);
                 }
+                
+                
             } catch (customerEmailError) {
                 console.error('⚠️ Customer email failed:', customerEmailError);
             }
