@@ -3875,38 +3875,6 @@
             }
         };
 
-        function showOrderSuccess(name, total, phone, address, region) {
-            const cartContent = document.getElementById('cartContent');
-            
-            cartContent.innerHTML = `
-                <div style="text-align: center; padding: 60px 20px;">
-                    <div style="font-size: 5em; margin-bottom: 30px; animation: bounce 1s ease;">🎉</div>
-                    <h2 style="color: var(--primary-green); font-size: 2.5em; margin-bottom: 20px;">تمّت الطلبية بنجاح!</h2>
-                    <p style="font-size: 1.3em; color: var(--text-dark); margin-bottom: 15px;">شكراً <strong>${name}</strong>!</p>
-                    <p style="font-size: 1.2em; color: var(--text-light); margin-bottom: 30px;">
-                        طلبيتك متاع <strong>${total.toFixed(2)} دينار</strong> قاعدة تتحضّر.<br>
-                        باش نتصلوا بيك على <strong>${phone}</strong> قريباً للتأكيد.
-                    </p>
-                    <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 25px; border-radius: 15px; margin: 30px auto; max-width: 500px; border: 3px solid var(--primary-green);">
-                        <p style="margin: 0; font-size: 1.1em; color: var(--text-dark);">
-                            <i class="fas fa-truck"></i> التوصيل باش يكون لـ: <br>
-                            <strong>${address}, ${region}</strong>
-                        </p>
-                    </div>
-                    ${isFirebaseConfigured ? '<p style="color: var(--primary-green); font-weight: 700;"><i class="fas fa-database"></i> تمّ حفظ الطلبية في قاعدة البيانات</p>' : ''}
-                    <button onclick="location.reload()" style="padding: 18px 50px; background: linear-gradient(135deg, var(--primary-green) 0%, #1e6b45 100%); color: white; border: none; border-radius: 15px; font-size: 1.2em; font-weight: 700; cursor: pointer; margin-top: 30px; font-family: 'Tajawal', sans-serif; box-shadow: 0 5px 20px rgba(45, 134, 89, 0.3);">
-                        <i class="fas fa-home"></i>
-                        رجوع للصفحة الرئيسية
-                    </button>
-                </div>
-            `;
-            
-            // Clear cart
-            cart = [];
-            localStorage.setItem('falla7inCart', JSON.stringify(cart));
-            updateCartBadge();
-        }
-
         // Product Search
         const searchInput = document.getElementById('productSearch');
         if (searchInput) {
@@ -4594,27 +4562,6 @@
                 });
         }
    // هذي الدالة اللي تظهر رسالة النجاح
-window.showOrderSuccess = function(name, total, phone, address, region) {
-    // 1. نصنعو المحتوى متاع الرسالة
-    const successHtml = `
-        <div id="successOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 9999; font-family: 'Tajawal', sans-serif;">
-            <div style="background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 400px; width: 90%; position: relative; border-bottom: 8px solid #2d8659;">
-                <div style="font-size: 60px; color: #2d8659; margin-bottom: 20px;">✅</div>
-                <h2 style="color: #2c3e2f; margin-bottom: 10px;">مبروك سي ${name}!</h2>
-                <p style="color: #5a6c5b; margin-bottom: 20px;">طلبك رقم #${Math.floor(Math.random()*1000)} تعدى بنجاح. تو نكلموك على الرقم <b>${phone}</b> باش نثبتو معاك الإرسال لـ <b>${region}</b>.</p>
-                <div style="background: #f5f1e8; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                    <span style="display: block; color: #2d8659; font-weight: bold;">المجموع المطلوب:</span>
-                    <span style="font-size: 24px; font-weight: 800; color: #2c3e2f;">${total.toFixed(2)} دينار</span>
-                </div>
-                <button onclick="document.getElementById('successOverlay').remove()" style="background: #2d8659; color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%;">ممتاز، شكراً!</button>
-            </div>
-        </div>
-    `;
-    
-    // 2. نزيدوها للصفحة
-    document.body.insertAdjacentHTML('beforeend', successHtml);
-};
-
 // ====== CHECKOUT FUNCTIONALITY ======
 
 // Go to Checkout
