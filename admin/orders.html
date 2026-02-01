@@ -638,11 +638,13 @@
         function displayOrders(filter) {
             currentFilter = filter;
             
-            // Update filter buttons
+            // Update filter buttons - find and activate the correct button
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
+                if (btn.getAttribute('onclick')?.includes(`'${filter}'`)) {
+                    btn.classList.add('active');
+                }
             });
-            event.target.classList.add('active');
 
             let filteredOrders = allOrders;
             if (filter !== 'all') {
