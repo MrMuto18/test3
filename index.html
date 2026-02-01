@@ -2517,21 +2517,22 @@
                     isTreeCrop = treeCrops.includes(this.dataset.crop);
                     console.log('Selected crop:', this.dataset.crop, 'Is tree:', isTreeCrop);
                     
-                    populateProblems();
+                    // Populate problems first
+                    if (typeof populateProblems === 'function') {
+                        populateProblems();
+                    }
                     
-                    // Auto-advance to next question after 500ms
-                    console.log('🔄 Auto-advance scheduled for crop selection...');
-                    setTimeout(() => {
-                        console.log('🔄 Checking validation for auto-advance...');
-                        const isValid = validateQuestion();
-                        console.log('✅ Validation result:', isValid);
-                        if (isValid) {
-                            console.log('➡️ Auto-advancing to next question...');
-                            nextQuestion();
-                        } else {
-                            console.log('❌ Validation failed, not advancing');
-                        }
-                    }, 500);
+                    // Force auto-advance for Q1
+                    console.log('🔄 Q1 auto-advance triggered');
+                    const autoAdvanceTimer = setTimeout(() => {
+                        console.log('➡️ Q1: Advancing now...');
+                        // Directly call nextQuestion without validation check
+                        // (we know crop is selected at this point)
+                        nextQuestion();
+                    }, 700);
+                    
+                    // Store timer so we can cancel if user manually clicks next
+                    card.dataset.autoAdvanceTimer = autoAdvanceTimer;
                 });
             });
 
