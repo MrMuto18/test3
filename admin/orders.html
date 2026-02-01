@@ -678,7 +678,25 @@
             `;
 
             filteredOrders.forEach(order => {
-                const date = order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('ar-TN') : 'غير محدد';
+                // Handle different createdAt formats
+                let date = 'غير محدد';
+                if (order.createdAt) {
+                    try {
+                        if (typeof order.createdAt.toDate === 'function') {
+                            // Firebase Timestamp
+                            date = new Date(order.createdAt.toDate()).toLocaleDateString('ar-TN');
+                        } else if (order.createdAt.seconds) {
+                            // Timestamp object with seconds
+                            date = new Date(order.createdAt.seconds * 1000).toLocaleDateString('ar-TN');
+                        } else {
+                            // String or number
+                            date = new Date(order.createdAt).toLocaleDateString('ar-TN');
+                        }
+                    } catch (e) {
+                        console.log('Error parsing date:', e);
+                        date = 'غير محدد';
+                    }
+                }
                 const statusText = getStatusText(order.status || 'pending');
                 const statusClass = order.status || 'pending';
 
@@ -731,7 +749,21 @@
             const order = allOrders.find(o => o.id === orderId);
             if (!order) return;
 
-            const date = order.createdAt ? new Date(order.createdAt.toDate()).toLocaleString('ar-TN') : 'غير محدد';
+            // Handle different createdAt formats
+            let date = 'غير محدد';
+            if (order.createdAt) {
+                try {
+                    if (typeof order.createdAt.toDate === 'function') {
+                        date = new Date(order.createdAt.toDate()).toLocaleString('ar-TN');
+                    } else if (order.createdAt.seconds) {
+                        date = new Date(order.createdAt.seconds * 1000).toLocaleString('ar-TN');
+                    } else {
+                        date = new Date(order.createdAt).toLocaleString('ar-TN');
+                    }
+                } catch (e) {
+                    console.log('Error parsing date:', e);
+                }
+            }
             const statusText = getStatusText(order.status || 'pending');
 
             let html = `
