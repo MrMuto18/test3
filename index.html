@@ -2518,6 +2518,20 @@
                     console.log('Selected crop:', this.dataset.crop, 'Is tree:', isTreeCrop);
                     
                     populateProblems();
+                    
+                    // Auto-advance to next question after 500ms
+                    console.log('🔄 Auto-advance scheduled for crop selection...');
+                    setTimeout(() => {
+                        console.log('🔄 Checking validation for auto-advance...');
+                        const isValid = validateQuestion();
+                        console.log('✅ Validation result:', isValid);
+                        if (isValid) {
+                            console.log('➡️ Auto-advancing to next question...');
+                            nextQuestion();
+                        } else {
+                            console.log('❌ Validation failed, not advancing');
+                        }
+                    }, 500);
                 });
             });
 
@@ -2527,6 +2541,13 @@
                     document.querySelectorAll('[data-area]').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
                     formState.area = this.dataset.area;
+                    
+                    // Auto-advance to next question after 500ms
+                    setTimeout(() => {
+                        if (validateQuestion()) {
+                            nextQuestion();
+                        }
+                    }, 500);
                 });
             });
 
@@ -2536,6 +2557,13 @@
                     document.querySelectorAll('[data-water]').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
                     formState.water = this.dataset.water;
+                    
+                    // Auto-advance to next question after 500ms
+                    setTimeout(() => {
+                        if (validateQuestion()) {
+                            nextQuestion();
+                        }
+                    }, 500);
                 });
             });
 
@@ -2545,6 +2573,13 @@
                     document.querySelectorAll('[data-soil]').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
                     formState.soil = this.dataset.soil;
+                    
+                    // Auto-advance to next question after 500ms
+                    setTimeout(() => {
+                        if (validateQuestion()) {
+                            nextQuestion();
+                        }
+                    }, 500);
                 });
             });
 
@@ -2554,6 +2589,13 @@
                     document.querySelectorAll('[data-salinity]').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
                     formState.salinity = this.dataset.salinity;
+                    
+                    // Auto-advance to next question after 500ms
+                    setTimeout(() => {
+                        if (validateQuestion()) {
+                            nextQuestion();
+                        }
+                    }, 500);
                 });
             });
 
@@ -2563,6 +2605,17 @@
                     document.querySelectorAll('[data-period]').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
                     formState.period = this.dataset.period;
+                    
+                    // Auto-advance - this is usually the last question, so it will trigger submit
+                    setTimeout(() => {
+                        if (validateQuestion()) {
+                            // Check if this is the last question
+                            const isLastQuestion = isTreeCrop ? (currentQuestion === 'tree-6') : (currentQuestion === totalQuestions);
+                            if (!isLastQuestion) {
+                                nextQuestion();
+                            }
+                        }
+                    }, 500);
                 });
             });
 
@@ -2574,6 +2627,13 @@
                     document.querySelectorAll('[data-tree-area]').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
                     formState.treeArea = this.dataset.treeArea;
+                    
+                    // Auto-advance to next question after 500ms
+                    setTimeout(() => {
+                        if (validateQuestion()) {
+                            nextQuestion();
+                        }
+                    }, 500);
                 });
             });
             
@@ -2583,6 +2643,13 @@
                     document.querySelectorAll('[data-tree-water]').forEach(c => c.classList.remove('active'));
                     this.classList.add('active');
                     formState.treeWater = this.dataset.treeWater;
+                    
+                    // Auto-advance to next question after 500ms
+                    setTimeout(() => {
+                        if (validateQuestion()) {
+                            nextQuestion();
+                        }
+                    }, 500);
                 });
             });
             
@@ -2592,6 +2659,13 @@
                     document.querySelectorAll('[data-tree-soil]').forEach(c => c.classList.remove('active'));
                     this.classList.add('active');
                     formState.treeSoil = this.dataset.treeSoil;
+                    
+                    // Auto-advance to next question after 500ms
+                    setTimeout(() => {
+                        if (validateQuestion()) {
+                            nextQuestion();
+                        }
+                    }, 500);
                 });
             });
             
@@ -2601,6 +2675,13 @@
                     document.querySelectorAll('[data-tree-stage]').forEach(c => c.classList.remove('active'));
                     this.classList.add('active');
                     formState.treeStage = this.dataset.treeStage;
+                    
+                    // Auto-advance to next question after 500ms
+                    setTimeout(() => {
+                        if (validateQuestion()) {
+                            nextQuestion();
+                        }
+                    }, 500);
                 });
             });
 
@@ -2827,7 +2908,7 @@
             
             updateProgress();
             updateButtons();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Removed auto scroll to top from nextQuestion
         }
 
         function previousQuestion() {
@@ -2866,7 +2947,7 @@
             
             updateProgress();
             updateButtons();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Removed auto scroll to top from previousQuestion
         }
 
         function validateQuestion() {
@@ -2996,7 +3077,7 @@
             document.getElementById('responseContent').innerHTML = responseHTML;
             document.getElementById('responseBox').classList.add('show');
             
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Removed auto scroll to top - user can scroll manually to see results
         }
 
         async function getProductsForSolutions(crop, period) {
@@ -3281,7 +3362,7 @@
             document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
             document.getElementById(tabName).classList.add('active');
             
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Removed auto scroll to top - let user stay at current position
             
             // If switching to cart, display cart
             if (tabName === 'cart') {
@@ -4148,6 +4229,11 @@
 
         // Close modals when clicking outside
         document.addEventListener('click', function(event) {
+            // Ensure body scroll is enabled
+            if (!document.querySelector('.modal[style*="display: block"]')) {
+                document.body.style.overflow = 'auto';
+            }
+        });
             const loginModal = document.getElementById('loginModal');
             const signupModal = document.getElementById('signupModal');
             
@@ -5004,6 +5090,35 @@ function showWelcomeNotification() {
 requestNotificationPermission();
     </script>   
 
+    <script>
+    // Force scroll fix - ensure page is always scrollable
+    setInterval(() => {
+        const hasOpenModal = document.querySelector('.modal[style*="display: block"]') || 
+                            document.querySelector('.modal.active');
+        if (!hasOpenModal) {
+            document.body.style.overflow = 'auto';
+            document.documentElement.style.overflow = 'auto';
+        }
+    }, 500);
+
+    // Fix on page load
+    window.addEventListener('load', () => {
+        document.body.style.overflow = 'auto';
+        document.documentElement.style.overflow = 'auto';
+    });
+    
+    // Fix on any click
+    document.addEventListener('click', () => {
+        setTimeout(() => {
+            const hasOpenModal = document.querySelector('.modal[style*="display: block"]') || 
+                                document.querySelector('.modal.active');
+            if (!hasOpenModal) {
+                document.body.style.overflow = 'auto';
+                document.documentElement.style.overflow = 'auto';
+            }
+        }, 100);
+    });
+    </script>
 </body>
 </html>
 
