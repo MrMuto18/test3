@@ -1672,7 +1672,7 @@
                                     <span class="option-icon">🌼</span>
                                     <div class="option-label">فترة العقد</div>
                                 </div>
-                                <div class="option-card" data-tree-stage="fruit-ripening">
+                                <div class="option-card" data-tree-stage="ripening">
                                     <span class="option-icon">🍇</span>
                                     <div class="option-label">تكوين ونضج الثمار</div>
                                 </div>
@@ -3018,6 +3018,8 @@
             if (!validateQuestion()) return;
             
             const crop = formState.crop;
+            const isTree = treeCrops.includes(crop);
+            const period = isTree ? formState.treeStage : formState.period;
 
             // Hide form
             document.getElementById('consultationForm').style.display = 'none';
@@ -3029,11 +3031,11 @@
                 <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 3px solid var(--primary-green);">
                     <h3 style="color: var(--primary-green); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
                         <span style="font-size: 1.5em;">🌾</span>
-                        <span>${getCropName(crop)} / ${getPeriodName(formState.period, crop)}</span>
+                        <span>${getCropName(crop)} / ${isTree ? getStageName(period) : getPeriodName(period, crop)}</span>
                     </h3>
                     <div style="background: white; padding: 15px; border-radius: 10px; font-size: 0.95em;">
                         <strong>📊 معلومات الفلاحة:</strong>
-                        المساحة: ${formState.area} | الري: ${formState.water} | التربة: ${formState.soil}
+                        المساحة: ${isTree ? formState.treeArea : formState.area} | الري: ${isTree ? formState.treeWater : formState.water} | التربة: ${isTree ? formState.treeSoil : formState.soil}
                     </div>
                 </div>
 
@@ -3042,7 +3044,7 @@
                     <span>الحلول الموصى بها في هذه الفترة:</span>
                 </h3>
                 
-                ${getSolutionsForPeriod(crop, formState.period)}
+                ${isTree ? await getTreeSolutionsFromFirebase(crop, period) : getSolutionsForPeriod(crop, period)}
                 
                 <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); padding: 20px; border-radius: 12px; margin-top: 25px; border: 2px solid var(--accent-orange);">
                     <p style="margin: 0; font-size: 1.05em; color: var(--text-dark); line-height: 1.7;">
@@ -3063,7 +3065,7 @@
                         </p>
                         
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
-                            ${await getProductsForSolutions(crop, formState.period)}
+                            ${await getProductsForSolutions(crop, period)}
                         </div>
                     </div>
                     
@@ -3142,9 +3144,93 @@
                 'grains': 'الحبوب',
                 'olive': 'الزيتون',
                 'strawberry': 'الفراولة',
-                'melon': 'الدلاع'
+                'melon': 'الدلاع',
+                'almond': 'اللوز',
+                'citrus': 'القوارص'
             };
             return names[crop] || crop;
+        }
+
+        function getStageName(stage) {
+            const names = {
+                'dormancy': 'فترة السبات (الشتاء)',
+                'flowering': 'فترة التزهير',
+                'fruit-set': 'فترة العقد',
+                'ripening': 'فترة نضج الثمار'
+            };
+            return names[stage] || stage;
+        }
+
+        async function getTreeSolutionsFromFirebase(crop, treeStage) {
+            try {
+                console.log(`🔍 جلب الحلول من Firebase: ${crop}, ${treeStage}`);
+                
+                const snapshot = await db.collection('solutions')
+                    .where('crop', '==', crop)
+                    .where('treeStage', '==', treeStage)
+                    .where('active', '==', true)
+                    .get();
+
+                if (snapshot.empty) {
+                    console.log('⚠️ لا توجد حلول في Firebase، استخدام القيم الافتراضية');
+                    return '<div style="padding: 20px; background: #fff3cd; border-radius: 10px; text-align: center;">لا توجد حلول محددة لهذه المرحلة حالياً</div>';
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const solution = doc.data();
+                    console.log(`✅ تم جلب حل: ${solution.periodName}`);
+                    
+                    html += `
+                        <div style="background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); border-right: 5px solid var(--primary-green);">
+                            <h4 style="color: var(--primary-green); margin-bottom: 15px; font-size: 1.3em;">
+                                ${solution.periodName || solution.problem}
+                            </h4>
+                            
+                            ${solution.notes ? `
+                                <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-right: 4px solid #ffc107;">
+                                    <strong style="color: #856404;">📝 ملاحظة:</strong>
+                                    <p style="margin: 10px 0 0 0; color: #856404;">${solution.notes}</p>
+                                </div>
+                            ` : ''}
+                            
+                            <div style="margin-top: 20px;">
+                                ${solution.products && solution.products.length > 0 ? solution.products.map(product => `
+                                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-right: 3px solid #2d8659;">
+                                        <div style="display: flex; align-items: flex-start; gap: 15px;">
+                                            <div style="font-size: 2em; min-width: 40px;">${product.icon || '🌱'}</div>
+                                            <div style="flex: 1;">
+                                                <strong style="color: var(--text-dark); font-size: 1.1em; display: block; margin-bottom: 8px;">
+                                                    ${product.name}
+                                                </strong>
+                                                <div style="color: #666; margin-bottom: 8px;">
+                                                    <strong>الجرعة:</strong> ${product.dosage || product.dose}
+                                                </div>
+                                                ${product.timing ? `
+                                                    <div style="color: #666; margin-bottom: 8px;">
+                                                        <strong>التوقيت:</strong> ${product.timing}
+                                                    </div>
+                                                ` : ''}
+                                                <div style="background: white; padding: 12px; border-radius: 8px; margin-top: 10px; border-right: 2px solid #4caf50;">
+                                                    <strong style="color: #2d8659;">💡 الفائدة:</strong>
+                                                    <p style="margin: 5px 0 0 0; color: var(--text-dark); line-height: 1.6;">
+                                                        ${product.purpose || product.reason}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('') : '<p>لا توجد منتجات محددة</p>'}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                return html;
+            } catch (error) {
+                console.error('❌ خطأ في جلب الحلول:', error);
+                return '<div style="padding: 20px; background: #f8d7da; border-radius: 10px; text-align: center; color: #721c24;">حدث خطأ في جلب الحلول</div>';
+            }
         }
 
         function getPeriodName(period, crop) {
