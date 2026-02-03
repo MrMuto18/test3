@@ -3173,6 +3173,7 @@
                     .where('crop', '==', crop)
                     .where('treeStage', '==', treeStage)
                     .where('active', '==', true)
+                    .limit(1)
                     .get();
 
                 if (snapshot.empty) {
