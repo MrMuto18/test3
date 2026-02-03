@@ -3180,57 +3180,64 @@
                     return '<div style="padding: 20px; background: #fff3cd; border-radius: 10px; text-align: center;">لا توجد حلول محددة لهذه المرحلة حالياً</div>';
                 }
 
-                let html = '';
+                let html = '<div class="solutions-list">';
+                let productIndex = 1;
+                
                 snapshot.forEach(doc => {
                     const solution = doc.data();
                     console.log(`✅ تم جلب حل: ${solution.periodName}`);
                     
-                    html += `
-                        <div style="background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); border-right: 5px solid var(--primary-green);">
-                            <h4 style="color: var(--primary-green); margin-bottom: 15px; font-size: 1.3em;">
-                                ${solution.periodName || solution.problem}
-                            </h4>
-                            
-                            ${solution.notes ? `
-                                <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-right: 4px solid #ffc107;">
-                                    <strong style="color: #856404;">📝 ملاحظة:</strong>
-                                    <p style="margin: 10px 0 0 0; color: #856404;">${solution.notes}</p>
-                                </div>
-                            ` : ''}
-                            
-                            <div style="margin-top: 20px;">
-                                ${solution.products && solution.products.length > 0 ? solution.products.map(product => `
-                                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-right: 3px solid #2d8659;">
-                                        <div style="display: flex; align-items: flex-start; gap: 15px;">
-                                            <div style="font-size: 2em; min-width: 40px;">${product.icon || '🌱'}</div>
-                                            <div style="flex: 1;">
-                                                <strong style="color: var(--text-dark); font-size: 1.1em; display: block; margin-bottom: 8px;">
-                                                    ${product.name}
-                                                </strong>
-                                                <div style="color: #666; margin-bottom: 8px;">
-                                                    <strong>الجرعة:</strong> ${product.dosage || product.dose}
+                    // Show notes if available
+                    if (solution.notes) {
+                        html += `
+                            <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); padding: 20px; border-radius: 12px; margin-bottom: 15px; border-right: 4px solid #ffc107;">
+                                <strong style="color: #856404;">📝 ملاحظة:</strong>
+                                <p style="margin: 10px 0 0 0; color: #856404; line-height: 1.6;">
+                                    ${solution.notes}
+                                </p>
+                            </div>
+                        `;
+                    }
+                    
+                    // Display products in old design
+                    if (solution.products && solution.products.length > 0) {
+                        solution.products.forEach(product => {
+                            html += `
+                                <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border-right: 5px solid var(--primary-green); box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+                                    <div style="display: flex; align-items: start; gap: 15px; margin-bottom: 12px;">
+                                        <span style="font-size: 2em; flex-shrink: 0;">${product.icon || '🌱'}</span>
+                                        <div style="flex: 1;">
+                                            <h4 style="color: var(--primary-green); margin: 0 0 8px 0; font-size: 1.15em;">
+                                                ${productIndex}. ${product.name}
+                                            </h4>
+                                            <div style="background: var(--warm-beige); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                                                <strong style="color: var(--dark-green);">📏 الجرعة:</strong>
+                                                <span style="color: var(--text-dark); font-weight: 600;">${product.dosage || product.dose}</span>
+                                            </div>
+                                            ${product.timing ? `
+                                                <div style="background: #e8f5e9; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                                                    <strong style="color: #2d8659;">⏰ التوقيت:</strong>
+                                                    <span style="color: var(--text-dark);">${product.timing}</span>
                                                 </div>
-                                                ${product.timing ? `
-                                                    <div style="color: #666; margin-bottom: 8px;">
-                                                        <strong>التوقيت:</strong> ${product.timing}
-                                                    </div>
-                                                ` : ''}
-                                                <div style="background: white; padding: 12px; border-radius: 8px; margin-top: 10px; border-right: 2px solid #4caf50;">
-                                                    <strong style="color: #2d8659;">💡 الفائدة:</strong>
-                                                    <p style="margin: 5px 0 0 0; color: var(--text-dark); line-height: 1.6;">
-                                                        ${product.purpose || product.reason}
-                                                    </p>
-                                                </div>
+                                            ` : ''}
+                                            <div style="padding: 10px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 8px;">
+                                                <strong style="color: #1565c0;">💡 علاش؟</strong>
+                                                <p style="margin: 5px 0 0 0; color: var(--text-dark); line-height: 1.6;">
+                                                    ${product.purpose || product.reason}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
-                                `).join('') : '<p>لا توجد منتجات محددة</p>'}
-                            </div>
-                        </div>
-                    `;
+                                </div>
+                            `;
+                            productIndex++;
+                        });
+                    }
                 });
 
+                html += '</div>';
                 return html;
+                
             } catch (error) {
                 console.error('❌ خطأ في جلب الحلول:', error);
                 return '<div style="padding: 20px; background: #f8d7da; border-radius: 10px; text-align: center; color: #721c24;">حدث خطأ في جلب الحلول</div>';
