@@ -3021,6 +3021,14 @@
             const isTree = treeCrops.includes(crop);
             const period = isTree ? formState.treeStage : formState.period;
 
+            console.log('🔍 Generating response:', {
+                crop,
+                isTree,
+                period,
+                treeStage: formState.treeStage,
+                willUseFirebase: isTree
+            });
+
             // Hide form
             document.getElementById('consultationForm').style.display = 'none';
             document.querySelector('.progress-bar').style.display = 'none';
