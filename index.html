@@ -2517,11 +2517,6 @@
                     isTreeCrop = treeCrops.includes(this.dataset.crop);
                     console.log('Selected crop:', this.dataset.crop, 'Is tree:', isTreeCrop);
                     
-                    // Populate problems first
-                    if (typeof populateProblems === 'function') {
-                        populateProblems();
-                    }
-                    
                     // Force auto-advance for Q1
                     console.log('🔄 Q1 auto-advance triggered');
                     const autoAdvanceTimer = setTimeout(() => {
