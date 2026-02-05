@@ -2501,6 +2501,7 @@
         // Track if user selected tree crop
         let isTreeCrop = false;
         const treeCrops = ['olive', 'beans', 'almond', 'grains'];
+        const firebaseCrops = ['olive', 'beans', 'almond', 'grains', 'fennel']; // المحاصيل اللي عندهم حلول في Firebase
 
         document.addEventListener('DOMContentLoaded', function() {
             setupConsultationForm();
@@ -3015,14 +3016,16 @@
             
             const crop = formState.crop;
             const isTree = treeCrops.includes(crop);
+            const useFirebase = firebaseCrops.includes(crop); // تحقق إذا المحصول يستخدم Firebase
             const period = isTree ? formState.treeStage : formState.period;
 
             console.log('🔍 Generating response:', {
                 crop,
                 isTree,
+                useFirebase,
                 period,
                 treeStage: formState.treeStage,
-                willUseFirebase: isTree
+                willUseFirebase: useFirebase
             });
 
             // Hide form
@@ -3048,7 +3051,7 @@
                     <span>الحلول الموصى بها في هذه الفترة:</span>
                 </h3>
                 
-                ${isTree ? await getTreeSolutionsFromFirebase(crop, period) : getSolutionsForPeriod(crop, period)}
+                ${useFirebase ? await getSolutionsFromFirebase(crop, period, isTree) : getSolutionsForPeriod(crop, period)}
                 
                 <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); padding: 20px; border-radius: 12px; margin-top: 25px; border: 2px solid var(--accent-orange);">
                     <p style="margin: 0; font-size: 1.05em; color: var(--text-dark); line-height: 1.7;">
@@ -3165,13 +3168,16 @@
             return names[stage] || stage;
         }
 
-        async function getTreeSolutionsFromFirebase(crop, treeStage) {
+        async function getSolutionsFromFirebase(crop, period, isTree) {
             try {
-                console.log(`🔍 جلب الحلول من Firebase: ${crop}, ${treeStage}`);
+                console.log(`🔍 جلب الحلول من Firebase: ${crop}, ${period}, isTree: ${isTree}`);
+                
+                // تحديد الحقل الصحيح للبحث (treeStage للأشجار، period للبسباس)
+                const fieldName = isTree ? 'treeStage' : 'period';
                 
                 const snapshot = await db.collection('solutions')
                     .where('crop', '==', crop)
-                    .where('treeStage', '==', treeStage)
+                    .where(fieldName, '==', period)
                     .where('active', '==', true)
                     .limit(1)
                     .get();
@@ -3200,8 +3206,18 @@
                         `;
                     }
                     
-                    // Display products in old design
-                    if (solution.products && solution.products.length > 0) {
+                    // إذا عندو solution text مفصل، اعرضو
+                    if (solution.solution && solution.solution.length > 100) {
+                        html += `
+                            <div style="background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; border-right: 5px solid var(--primary-green); box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+                                <div style="white-space: pre-line; line-height: 1.8; color: var(--text-dark);">
+                                    ${solution.solution}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    // وإلا، اعرض المنتجات بالطريقة القديمة
+                    else if (solution.products && solution.products.length > 0) {
                         solution.products.forEach(product => {
                             html += `
                                 <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border-right: 5px solid var(--primary-green); box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
@@ -3243,6 +3259,11 @@
                 console.error('❌ خطأ في جلب الحلول:', error);
                 return '<div style="padding: 20px; background: #f8d7da; border-radius: 10px; text-align: center; color: #721c24;">حدث خطأ في جلب الحلول</div>';
             }
+        }
+        
+        // الفنكشن القديمة للأشجار (نخليها للتوافق)
+        async function getTreeSolutionsFromFirebase(crop, treeStage) {
+            return await getSolutionsFromFirebase(crop, treeStage, true);
         }
 
         function getPeriodName(period, crop) {
